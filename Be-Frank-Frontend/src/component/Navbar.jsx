@@ -55,9 +55,9 @@ const Navbar = () => {
                             ))}
                         </div>
                          {/* User Icon */}
-                        <button aria-label="User account">
+                        <Link aria-label="User account" to={'/admin/login'}>
                             <CircleUser className="h-7 w-7 text-black" strokeWidth={2} />
-                        </button>
+                        </Link>
                     </div>
 
                     {/* Mobile Menu Button (Text instead of Icon) */}
