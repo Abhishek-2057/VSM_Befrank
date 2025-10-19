@@ -9,3 +9,5 @@ router.post("/login", loginAdmin);
 router.get('/profile', verifyToken, getAdminProfile);
 
 export default router;
+
+
