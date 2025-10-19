@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import axiosInstance from '../../utils/axiosInstance';
-
+import { X } from 'lucide-react';
 // Reusable Input Field Component
 const FormInput = ({ label, name, type, value, onChange, error, ...props }) => {
     const inputStyle = "w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300";
@@ -21,6 +21,114 @@ const FormInput = ({ label, name, type, value, onChange, error, ...props }) => {
                 {...props}
             />
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
+    );
+};
+
+// Drag and Drop Component
+const DragDropArea = ({ onFilesDrop, acceptedFiles, multiple = false, label, error, previews, onRemoveFile }) => {
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleDragOver = useCallback((e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e) => {
+        e.preventDefault();
+        setIsDragging(false);
+    }, []);
+
+    const handleDrop = useCallback((e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const files = Array.from(e.dataTransfer.files);
+        onFilesDrop(multiple ? files : [files[0]]);
+    }, [multiple, onFilesDrop]);
+
+    const handleFileInput = (e) => {
+        const files = Array.from(e.target.files);
+        onFilesDrop(multiple ? files : [files[0]]);
+    };
+
+    return (
+        <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+                {label}
+            </label>
+            
+            <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-300 cursor-pointer
+                    ${isDragging 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
+                    } 
+                    ${error ? 'border-red-500 bg-red-50' : ''}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+            >
+                <input
+                    type="file"
+                    multiple={multiple}
+                    accept="image/*"
+                    onChange={handleFileInput}
+                    className="hidden"
+                    id={`file-input-${label.replace(/\s+/g, '-')}`}
+                />
+                <label 
+                    htmlFor={`file-input-${label.replace(/\s+/g, '-')}`}
+                    className="cursor-pointer"
+                >
+                    <div className="space-y-2">
+                        <svg className="mx-auto h-12 w-12 text-gray-400" 
+                            stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" 
+                                strokeWidth={2} 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" />
+                        </svg>
+                        <div className="flex text-sm items-center justify-center text-gray-600">
+                            <span className="relative rounded-md font-medium text-blue-600 hover:text-blue-500">
+                                Upload a file
+                            </span>
+                            <p className="pl-1">or drag and drop</p>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                            PNG, JPG, GIF up to 5MB
+                        </p>
+                    </div>
+                </label>
+            </div>
+
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
+            {/* Preview Section */}
+            {previews && previews.length > 0 && (
+                <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Previews:</p>
+                    <div className={`grid gap-4 ${multiple ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6' : ''}`}>
+                        {previews.map((preview, index) => (
+                            <div key={index} className="relative group">
+                                <img 
+                                    src={preview.url} 
+                                    alt={`Preview ${index + 1}`} 
+                                    className={`rounded-lg object-cover ${multiple ? 'w-full h-24' : 'w-1/3'}`} 
+                                />
+                                {multiple && (
+                                    <button
+                                        type="button"
+                                        onClick={() => onRemoveFile(index)}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white items-center justify-center rounded-full w-6 h-6 flex opacity-100 cursor-pointer group-hover:opacity-100 transition-opacity duration-200"
+                                    >
+                                        <X size={20}/>
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -55,7 +163,7 @@ export const EventForm = () => {
         date: '',
     });
 
-    // State for ReactQuill description (it's handled separately)
+    // State for ReactQuill description
     const [description, setDescription] = useState('');
 
     // State for file data
@@ -84,26 +192,61 @@ export const EventForm = () => {
     // Handler for ReactQuill
     const handleDescriptionChange = (value) => {
         setDescription(value);
-        if (value && value !== '<p><br></p>') { // Clear error if user starts typing
+        if (value && value !== '<p><br></p>') {
             setErrors(prev => ({ ...prev, description: null }));
         }
     };
 
-    const handleMainImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
+    // Main Image Handlers
+    const handleMainImageDrop = (files) => {
+        if (files.length > 0) {
+            const file = files[0];
             setMainImage(file);
             setMainImagePreview(URL.createObjectURL(file));
             setErrors(prev => ({ ...prev, mainImage: null }));
         }
     };
 
-    const handleGalleryImagesChange = (e) => {
-        const files = Array.from(e.target.files);
-        setGalleryImages(files);
-        galleryImagePreviews.forEach(URL.revokeObjectURL); // Revoke old URLs
-        setGalleryImagePreviews(files.map(file => URL.createObjectURL(file)));
-        setErrors(prev => ({ ...prev, galleryImages: null }));
+    // Gallery Images Handlers - FIXED
+    const handleGalleryImagesDrop = (files) => {
+        if (files.length > 0) {
+            // Create new array with existing and new files
+            const newGalleryImages = [...galleryImages, ...files];
+            setGalleryImages(newGalleryImages);
+            
+            // Create previews for new files
+            const newPreviews = files.map(file => ({
+                url: URL.createObjectURL(file),
+                file: file
+            }));
+            
+            setGalleryImagePreviews(prev => [...prev, ...newPreviews]);
+            setErrors(prev => ({ ...prev, galleryImages: null }));
+        }
+    };
+
+    // Remove gallery image
+    const removeGalleryImage = (index) => {
+        // Revoke the object URL to prevent memory leaks
+        URL.revokeObjectURL(galleryImagePreviews[index].url);
+        
+        // Remove from both arrays
+        const newGalleryImages = [...galleryImages];
+        const newPreviews = [...galleryImagePreviews];
+        
+        newGalleryImages.splice(index, 1);
+        newPreviews.splice(index, 1);
+        
+        setGalleryImages(newGalleryImages);
+        setGalleryImagePreviews(newPreviews);
+    };
+
+    // Clear all gallery images
+    const clearAllGalleryImages = () => {
+        // Revoke all object URLs
+        galleryImagePreviews.forEach(preview => URL.revokeObjectURL(preview.url));
+        setGalleryImages([]);
+        setGalleryImagePreviews([]);
     };
 
     // --- Validation & Submission ---
@@ -141,17 +284,17 @@ export const EventForm = () => {
         data.append('facilitatorName', formData.facilitatorName);
         data.append('date', formData.date);
         data.append('description', description);
-        data.append('mainImage', mainImage); // Append the main image file
+        data.append('mainImage', mainImage);
+        
+        // Append each gallery image
         galleryImages.forEach(file => {
-            data.append('galleryImages', file); // Append each gallery image
+            data.append('galleryImages', file);
         });
 
         try {
-            // Use axios for upload progress
             await axiosInstance.post('/api/events/create', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    // Auth header should be added automatically by your axiosInstance
                 },
                 onUploadProgress: (progressEvent) => {
                     const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -160,14 +303,9 @@ export const EventForm = () => {
             });
 
             alert('Event Created Successfully!');
+            
             // Reset form
-            setFormData({ eventName: '', location: '', facilitatorName: '', date: '' });
-            setDescription('');
-            setMainImage(null);
-            setGalleryImages([]);
-            setMainImagePreview('');
-            setGalleryImagePreviews([]);
-            setErrors({});
+            resetForm();
 
         } catch (error) {
             console.error("Failed to create event:", error.response?.data || error.message);
@@ -178,9 +316,21 @@ export const EventForm = () => {
         }
     };
 
-    // --- Render ---
-
-    const fileInputStyle = "w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer";
+    // Reset form function
+    const resetForm = () => {
+        setFormData({ eventName: '', location: '', facilitatorName: '', date: '' });
+        setDescription('');
+        setMainImage(null);
+        setGalleryImages([]);
+        
+        // Revoke object URLs
+        if (mainImagePreview) URL.revokeObjectURL(mainImagePreview);
+        galleryImagePreviews.forEach(preview => URL.revokeObjectURL(preview.url));
+        
+        setMainImagePreview('');
+        setGalleryImagePreviews([]);
+        setErrors({});
+    };
 
     return (
         <div className="bg-gray-100 min-h-screen p-4 sm:p-8">
@@ -197,6 +347,7 @@ export const EventForm = () => {
                         onChange={handleChange} 
                         error={errors.eventName}
                     />
+
                     {/* Event Date */}
                     <FormInput 
                         label="Event Date" 
@@ -206,6 +357,7 @@ export const EventForm = () => {
                         onChange={handleChange} 
                         error={errors.date}
                     />
+
                     {/* Location */}
                     <FormInput 
                         label="Location (e.g., Thane)" 
@@ -215,6 +367,7 @@ export const EventForm = () => {
                         onChange={handleChange} 
                         error={errors.location}
                     />
+
                     {/* Facilitator Name */}
                     <FormInput 
                         label="Facilitator Name (Optional)" 
@@ -240,46 +393,46 @@ export const EventForm = () => {
                         {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                     </div>
 
-                    {/* Main Image Input */}
+                    {/* Main Image Input with Drag & Drop */}
                     <div className="md:col-span-2">
-                        <label htmlFor="mainImage" className="block text-sm font-medium text-gray-700 mb-1">
-                            Main Event Image (for card)
-                        </label>
-                        <input
-                            type="file"
-                            id="mainImage"
-                            accept="image/*"
-                            onChange={handleMainImageChange}
-                            className={fileInputStyle}
-                            disabled={isSubmitting}
+                        <DragDropArea
+                            onFilesDrop={handleMainImageDrop}
+                            multiple={false}
+                            label="Main Event Image (for card)"
+                            error={errors.mainImage}
+                            previews={mainImagePreview ? [{ url: mainImagePreview }] : []}
                         />
-                        {errors.mainImage && <p className="text-red-500 text-sm mt-1">{errors.mainImage}</p>}
-                        {mainImagePreview && (
-                            <div className="mt-4"><img src={mainImagePreview} alt="Main preview" className="w-1/2 rounded-lg object-cover" /></div>
-                        )}
                     </div>
                     
-                    {/* Gallery Images Input */}
+                    {/* Gallery Images Input with Drag & Drop */}
                     <div className="md:col-span-2">
-                        <label htmlFor="galleryImages" className="block text-sm font-medium text-gray-700 mb-1">
-                            Gallery Images (Select one or more)
-                        </label>
-                        <input
-                            type="file"
-                            id="galleryImages"
-                            accept="image/*"
-                            multiple
-                            onChange={handleGalleryImagesChange}
-                            className={fileInputStyle}
-                            disabled={isSubmitting}
+                        <DragDropArea
+                            onFilesDrop={handleGalleryImagesDrop}
+                            multiple={true}
+                            label="Gallery Images (Drag and drop multiple images)"
+                            error={errors.galleryImages}
+                            previews={galleryImagePreviews}
+                            onRemoveFile={removeGalleryImage}
                         />
-                        {errors.galleryImages && <p className="text-red-500 text-sm mt-1">{errors.galleryImages}</p>}
-                        {galleryImagePreviews.length > 0 && (
-                            <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                                {galleryImagePreviews.map((preview, index) => (
-                                    <img key={index} src={preview} alt={`Gallery preview ${index + 1}`} className="w-full h-24 rounded-lg object-cover" />
-                                ))}
+                        
+                        {/* Clear All Gallery Images Button */}
+                        {galleryImages.length > 0 && (
+                            <div className="mt-2 text-right">
+                                <button
+                                    type="button"
+                                    onClick={clearAllGalleryImages}
+                                    className="text-sm text-red-600 hover:text-red-800 font-medium"
+                                >
+                                    Clear All Gallery Images
+                                </button>
                             </div>
+                        )}
+                        
+                        {/* Gallery Images Count */}
+                        {galleryImages.length > 0 && (
+                            <p className="text-sm text-gray-600 mt-2">
+                                {galleryImages.length} image(s) selected
+                            </p>
                         )}
                     </div>
                     
