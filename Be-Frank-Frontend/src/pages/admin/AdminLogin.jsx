@@ -9,7 +9,7 @@ export const AdminLogin = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setError(''); // Clear previous errors
+        setError(''); 
         
         const loggedIn = auth.login(username, password);
         
