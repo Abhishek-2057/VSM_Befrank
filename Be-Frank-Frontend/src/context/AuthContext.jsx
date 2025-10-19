@@ -10,48 +10,62 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('adminToken');
-        if (token) {
+        // This function will run once when the app loads
+        const verifyAuthToken = async () => {
+            const token = localStorage.getItem('adminToken');
             
-            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            setIsAuthenticated(true);
-        }
-        setLoading(false); 
-    }, []);
+            if (token) {
+                try {
+                    // 1. Set the token header for the verification request
+                    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                    
+                    // 2. Call your backend's verify route (getAdminProfile)
+                    // This will throw an error if the token is invalid (e.g., 401)
+                    await axiosInstance.get('/api/admin/profile');
+                    
+                    // 3. If the request succeeds, the token is valid
+                    setIsAuthenticated(true);
+                    
+                } catch (error) {
+                    // 4. If the token is invalid, log the user out
+                    console.error("Token verification failed, logging out:", error.message);
+                    localStorage.removeItem('adminToken');
+                    delete axiosInstance.defaults.headers.common['Authorization'];
+                    setIsAuthenticated(false);
+                }
+            }
+            
+            // 5. Finished loading, app can now render
+            setLoading(false);
+        };
+
+        verifyAuthToken();
+    }, []); // The empty array ensures this runs only once on mount
 
     const login = async (username, password) => {
         try {
-            // Axios automatically stringifies the body and sets headers
+            // Note: I'm using '/api/admin/login' to match your backend controller
             const response = await axiosInstance.post(
-                "/user/login",
+                "/api/admin/login",
                 { username, password }
             );
 
-            // Axios response data is in `response.data`
-            // The `response.ok` check is not needed, as axios throws an error on non-2xx status
             const data = response.data; 
 
             if (data.token) {
-                // --- Store the token ---
                 localStorage.setItem('adminToken', data.token);
-                
-                // --- Set token for all future axios requests ---
                 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-                
                 setIsAuthenticated(true);
                 
                 console.log("Admin logged in successfully");
-                navigate('/admin/dashboard'); // Redirect to admin page
+                navigate('/admin/dashboard'); 
                 return true;
             } else {
                 throw new Error('No token received');
             }
 
         } catch (error) {
-            // This catch block will now handle 401 (Invalid Credentials) errors from axios
             console.error("Login failed:", error.response ? error.response.data : error.message);
-            
-            // Ensure state is clean on failure
             localStorage.removeItem('adminToken');
             delete axiosInstance.defaults.headers.common['Authorization'];
             setIsAuthenticated(false);
@@ -60,13 +74,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('adminToken'); // Clear the token
-        
-        // --- Clear the token from axios ---
+        localStorage.removeItem('adminToken'); 
         delete axiosInstance.defaults.headers.common['Authorization'];
-
         setIsAuthenticated(false);
-        navigate('/admin/login'); // Redirect to login page
+        navigate('/admin/login'); 
     };
 
     const value = {

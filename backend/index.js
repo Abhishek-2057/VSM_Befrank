@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import AdminRoute from "./routes/adminroutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(cors());
 
 
 app.use("/api/admin", AdminRoute);
+app.use("/api/events", eventRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running successfully!");

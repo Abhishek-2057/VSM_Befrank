@@ -4,6 +4,13 @@ import Admin from "../models/admin.js";
 /**
  * @desc Middleware to protect routes by verifying JWT
  */
+
+export const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
+
 export const verifyToken = async (req, res, next) => {
   let token;
 

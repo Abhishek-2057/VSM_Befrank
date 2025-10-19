@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { User, CircleUser } from 'lucide-react'; // Import the User icon from lucide-react
+import { useAuth } from "../context/authContext";
 
 // Navigation items are defined in an array for easy mapping.
 const navItems = [
@@ -17,7 +18,7 @@ const Navbar = () => {
     const [active, setActive] = useState("About us"); // Set default to match image
     // State to control the mobile drawer visibility.
     const [mobileOpen, setMobileOpen] = useState(false);
-
+    const auth = useAuth();
     const handleDrawerToggle = () => {
         setMobileOpen(prev => !prev);
     };
@@ -55,9 +56,13 @@ const Navbar = () => {
                             ))}
                         </div>
                          {/* User Icon */}
-                        <Link aria-label="User account" to={'/admin/login'}>
+                        { auth.isAuthenticated ? <Link aria-label="User account" to={'/admin/dashboard'}>
+                            <CircleUser className="h-7 w-7 text-black" strokeWidth={2} />
+                        </Link> 
+                        : <Link aria-label="User account" to={'/admin/login'}>
                             <CircleUser className="h-7 w-7 text-black" strokeWidth={2} />
                         </Link>
+                        }
                     </div>
 
                     {/* Mobile Menu Button (Text instead of Icon) */}
