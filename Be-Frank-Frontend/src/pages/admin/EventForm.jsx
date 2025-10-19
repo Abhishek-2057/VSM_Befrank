@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import axiosInstance from '../../utils/axiosInstance';
 import { X } from 'lucide-react';
-// Reusable Input Field Component
+import { useNavigate, useParams } from 'react-router-dom';
+
 const FormInput = ({ label, name, type, value, onChange, error, ...props }) => {
     const inputStyle = "w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300";
     return (
@@ -25,7 +26,6 @@ const FormInput = ({ label, name, type, value, onChange, error, ...props }) => {
     );
 };
 
-// Drag and Drop Component
 const DragDropArea = ({ onFilesDrop, acceptedFiles, multiple = false, label, error, previews, onRemoveFile }) => {
     const [isDragging, setIsDragging] = useState(false);
 
@@ -133,7 +133,6 @@ const DragDropArea = ({ onFilesDrop, acceptedFiles, multiple = false, label, err
     );
 };
 
-// ReactQuill modules configuration
 const quillModules = {
     toolbar: {
         container: [
@@ -153,31 +152,54 @@ const quillModules = {
     },
 };
 
-// Main Admin Form Component
 export const EventForm = () => {
-    // State for simple text fields
-    const [formData, setFormData] = useState({
-        eventName: '',
-        location: '',
-        facilitatorName: '',
-        date: '',
-    });
+    const { id } = useParams(); // Get event ID from URL for editing
+    const navigate = useNavigate();
+    const isEditMode = !!id;
 
-    // State for ReactQuill description
+    const [formData, setFormData] = useState({ eventName: '', location: '', facilitatorName: '', date: '' });
     const [description, setDescription] = useState('');
-
-    // State for file data
+    
+    // For new uploads
     const [mainImage, setMainImage] = useState(null);
-    const [galleryImages, setGalleryImages] = useState([]);
-
-    // State for image previews
+    const [galleryImages, setGalleryImages] = useState([]); // Holds new file objects
+    
+    // For displaying previews
     const [mainImagePreview, setMainImagePreview] = useState('');
-    const [galleryImagePreviews, setGalleryImagePreviews] = useState([]);
+    const [galleryImagePreviews, setGalleryImagePreviews] = useState([]); // Holds all previews (existing + new)
 
-    // State for form status
+    // For tracking existing images in edit mode
+    const [existingGalleryImages, setExistingGalleryImages] = useState([]);
+
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+
+
+    useEffect(() => {
+        if (isEditMode) {
+            const fetchEventData = async () => {
+                try {
+                    const response = await axiosInstance.get(`/api/events/${id}`);
+                    const event = response.data.data;
+                    setFormData({
+                        eventName: event.eventName,
+                        location: event.location,
+                        facilitatorName: event.facilitatorName,
+                        date: new Date(event.date).toISOString().split('T')[0], // Format date for input
+                    });
+                    setDescription(event.description);
+                    setMainImagePreview(event.mainImage.url);
+                    setExistingGalleryImages(event.galleryImages);
+                    setGalleryImagePreviews(event.galleryImages.map(img => ({ ...img, isExisting: true })));
+                } catch (error) {
+                    console.error("Failed to fetch event data:", error);
+                    alert("Could not load event data for editing.");
+                }
+            };
+            fetchEventData();
+        }
+    }, [id, isEditMode]);
 
     // --- Handlers ---
 
@@ -197,7 +219,6 @@ export const EventForm = () => {
         }
     };
 
-    // Main Image Handlers
     const handleMainImageDrop = (files) => {
         if (files.length > 0) {
             const file = files[0];
@@ -207,38 +228,30 @@ export const EventForm = () => {
         }
     };
 
-    // Gallery Images Handlers - FIXED
-    const handleGalleryImagesDrop = (files) => {
-        if (files.length > 0) {
-            // Create new array with existing and new files
-            const newGalleryImages = [...galleryImages, ...files];
-            setGalleryImages(newGalleryImages);
-            
-            // Create previews for new files
-            const newPreviews = files.map(file => ({
-                url: URL.createObjectURL(file),
-                file: file
-            }));
-            
-            setGalleryImagePreviews(prev => [...prev, ...newPreviews]);
-            setErrors(prev => ({ ...prev, galleryImages: null }));
-        }
+const handleGalleryImagesDrop = (files) => {
+        const newFiles = files.map(file => ({
+            url: URL.createObjectURL(file),
+            file: file,
+            isExisting: false
+        }));
+        setGalleryImages(prev => [...prev, ...files]);
+        setGalleryImagePreviews(prev => [...prev, ...newFiles]);
     };
 
-    // Remove gallery image
-    const removeGalleryImage = (index) => {
-        // Revoke the object URL to prevent memory leaks
-        URL.revokeObjectURL(galleryImagePreviews[index].url);
+    const removeGalleryImage = (indexToRemove) => {
+        const previewToRemove = galleryImagePreviews[indexToRemove];
         
-        // Remove from both arrays
-        const newGalleryImages = [...galleryImages];
-        const newPreviews = [...galleryImagePreviews];
-        
-        newGalleryImages.splice(index, 1);
-        newPreviews.splice(index, 1);
-        
-        setGalleryImages(newGalleryImages);
-        setGalleryImagePreviews(newPreviews);
+        if (previewToRemove.isExisting) {
+            // Remove from existing images
+            setExistingGalleryImages(prev => prev.filter((_, index) => index !== existingGalleryImages.findIndex(img => img._id === previewToRemove._id)));
+        } else {
+            // Remove from new images
+            URL.revokeObjectURL(previewToRemove.url);
+            setGalleryImages(prev => prev.filter((_, index) => index !== galleryImages.findIndex(f => f === previewToRemove.file)));
+        }
+
+        // Update previews
+        setGalleryImagePreviews(prev => prev.filter((_, index) => index !== indexToRemove));
     };
 
     // Clear all gallery images
@@ -259,8 +272,8 @@ export const EventForm = () => {
         if (!description || description === '<p><br></p>') {
             newErrors.description = 'Description is required';
         }
-        if (!mainImage) newErrors.mainImage = 'A main event image is required';
-        if (galleryImages.length === 0) newErrors.galleryImages = 'At least one gallery image is required';
+        if (!mainImage && !isEditMode) newErrors.mainImage = 'A main event image is required';
+        if (galleryImages.length === 0 && existingGalleryImages.length === 0) newErrors.galleryImages = 'At least one gallery image is required';
         return newErrors;
     };
 
@@ -277,42 +290,48 @@ export const EventForm = () => {
         setIsSubmitting(true);
         setUploadProgress(0);
 
-        // We must use FormData for file uploads
         const data = new FormData();
         data.append('eventName', formData.eventName);
         data.append('location', formData.location);
         data.append('facilitatorName', formData.facilitatorName);
         data.append('date', formData.date);
         data.append('description', description);
-        data.append('mainImage', mainImage);
+
+        if (mainImage) {
+            data.append('mainImage', mainImage);
+        }
         
-        // Append each gallery image
         galleryImages.forEach(file => {
             data.append('galleryImages', file);
         });
 
+        if (isEditMode) {
+            data.append('existingGalleryImages', JSON.stringify(existingGalleryImages));
+        }
+
         try {
-            await axiosInstance.post('/api/events/create', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+            const config = {
+                headers: { 'Content-Type': 'multipart/form-data' },
                 onUploadProgress: (progressEvent) => {
                     const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                     setUploadProgress(percent);
                 }
-            });
+            };
 
-            alert('Event Created Successfully!');
-            
-            // Reset form
-            resetForm();
-
+            if (isEditMode) {
+                await axiosInstance.put(`/api/events/${id}`, data, config);
+                alert('Event Updated Successfully!');
+                navigate('/admin/events'); // Navigate back to the list
+            } else {
+                await axiosInstance.post('/api/events/create', data, config);
+                alert('Event Created Successfully!');
+                // ... resetForm() logic ...
+            }
         } catch (error) {
-            console.error("Failed to create event:", error.response?.data || error.message);
-            alert('Failed to create event. Please check the console.');
+            console.error("Submission failed:", error);
+            alert('Operation failed. Please check the console.');
         } finally {
             setIsSubmitting(false);
-            setUploadProgress(0);
         }
     };
 
@@ -335,7 +354,9 @@ export const EventForm = () => {
     return (
         <div className="bg-gray-100 min-h-screen p-4 sm:p-8">
             <form onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg" noValidate>
-                <h2 className="text-3xl font-bold text-[#f48321] mb-8">Create New Event</h2>
+                <h2 className="text-3xl font-bold text-[#f48321] mb-8">
+                    {isEditMode ? 'Edit Event' : 'Create New Event'}
+                </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Event Name */}
@@ -453,7 +474,7 @@ export const EventForm = () => {
                                 className="bg-[#2692d1] hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 disabled:bg-gray-400"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? 'Submitting...' : 'Create Event'}
+                                {isSubmitting ? 'Saving...' : isEditMode ? 'Update Event' : 'Create Event'}
                             </button>
                         </div>
                     </div>

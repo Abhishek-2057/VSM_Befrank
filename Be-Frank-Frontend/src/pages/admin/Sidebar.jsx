@@ -37,7 +37,7 @@ export const Sidebar = () => {
                     Dashboard
                 </NavLink>
                 <NavLink
-                    to="/admin/create-event"
+                    to="/admin/events"
                     className={({ isActive }) => isActive ? activeClassName : inactiveClassName}
                 >
                     <PlusSquare size={20} className="mr-3" />
