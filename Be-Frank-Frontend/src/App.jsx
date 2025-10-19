@@ -14,6 +14,7 @@ import { EventForm } from "./pages/admin/EventForm" // Your form from the previo
 import { ProtectedRoute } from "./component/ProtectedRoute"
 import { AdminDashboard } from "./pages/admin/AdminDashboard"; // A new dashboard page
 import { AuthProvider } from "./context/authContext"
+import { AdminContactSubmissions } from "./pages/admin/ContactSubmissions"
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/create-event" element={<EventForm />} />
+            <Route path="/admin/contact-submissions" element={<AdminContactSubmissions />} />
             {/* You can add more admin routes here */}
           </Route>
           

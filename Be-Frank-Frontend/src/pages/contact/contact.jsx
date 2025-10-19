@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axiosInstance from '../../utils/axiosInstance';
 
 const ContactForm = () => {
     // State for form input values
@@ -9,6 +10,9 @@ const ContactForm = () => {
         message: '',
         agree: false,
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitSuccess, setSubmitSuccess] = useState(false); 
+    const [submitError, setSubmitError] = useState('');
 
     // State for validation errors
     const [errors, setErrors] = useState({});
@@ -42,22 +46,34 @@ const ContactForm = () => {
         return newErrors;
     };
 
-    // Handles form submission
-    const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent default browser submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitSuccess(false); 
+        setSubmitError('');
         const validationErrors = validate();
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length === 0) {
-            console.log("Form Submitted:", formData);
-            // Reset form after successful submission
-            setFormData({
-                name: '',
-                email: '',
-                phone: '',
-                message: '',
-                agree: false,
-            });
+            setIsSubmitting(true);
+            try {
+                const response = await axiosInstance.post('/api/contact/submit', formData);
+
+                setSubmitSuccess(true); 
+                setFormData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    message: '',
+                    agree: false,
+                });
+                setErrors({}); 
+
+            } catch (error) {
+                console.error("Submission failed:", error.response?.data || error.message);
+                setSubmitError(error.response?.data?.message || 'Submission failed. Please try again.');
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 
@@ -74,6 +90,9 @@ const ContactForm = () => {
         >
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 text-left">Contact Us</h2>
             <div className="w-24 sm:w-48 border border-yellow-400 my-4" />
+
+            {submitSuccess && <p className="text-green-600 mb-4">Thank you! Your message has been sent successfully.</p>}
+            {submitError && <p className="text-red-600 mb-4">{submitError}</p>}
             
             <div className="space-y-5">
                 <div>
@@ -144,9 +163,10 @@ const ContactForm = () => {
                 <div className="text-left">
                     <button
                         type="submit"
-                        className="bg-[#FFCB05] hover:bg-yellow-500 text-black font-semibold rounded-lg text-md px-12 py-2 transition-colors duration-300"
+                        disabled={isSubmitting} 
+                        className="bg-[#FFCB05] hover:bg-yellow-500 text-black font-semibold rounded-lg text-md px-12 py-2 transition-colors duration-300 disabled:bg-gray-400"
                     >
-                        Submit
+                        {isSubmitting ? 'Submitting...' : 'Submit'}
                     </button>
                 </div>
             </div>
