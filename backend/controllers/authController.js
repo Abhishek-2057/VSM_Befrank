@@ -1,11 +1,6 @@
+import { generateToken } from "../middleware/adminAuth.js";
 import Admin from "../models/admin.js";
-import jwt from "jsonwebtoken";
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
-  });
-};
 
 export const loginAdmin = async (req, res) => {
   const { username, password } = req.body;
@@ -24,5 +19,18 @@ export const loginAdmin = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
+
+export const getAdminProfile = (req, res) => {
+  
+  if (req.admin) {
+    res.status(200).json({
+      _id: req.admin._id,
+      username: req.admin.username,
+    });
+  } else {
+    res.status(404).json({ message: "Admin not found" });
   }
 };
