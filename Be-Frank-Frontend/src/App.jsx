@@ -7,6 +7,9 @@ import { About } from "./pages/about/about"
 import { EventsPage } from "./pages/Our Initiatives/EventPage"
 import { ContactPage } from "./pages/contact/contact"
 import OurImpact from "./pages/Our Impact/OurImpact"
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // Common Components
 
 import Navbar from "./component/Navbar"
@@ -19,6 +22,7 @@ import { ProtectedRoute } from "./component/ProtectedRoute"
 import { AdminDashboard } from "./pages/admin/AdminDashboard" // Keep this for the default view
 import { AdminContactSubmissions } from "./pages/admin/ContactSubmissions"
 import { AdminLayout } from "./pages/admin/AdminLayout"
+import { AllEventsPage } from "./pages/admin/AllEventsPage";
 
 // Helper component to handle conditional layout
 const LayoutWrapper = ({ children }) => {
@@ -42,7 +46,18 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        {/* Wrap Routes and Footer inside LayoutWrapper */}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
         <LayoutWrapper>
           <Routes>
             {/* --- Public Routes --- */}
@@ -59,8 +74,11 @@ function App() {
             {/* Protected Admin Section */}
             <Route element={<ProtectedRoute />}>
               <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="create-event" element={<EventForm />} />
+                <Route path="events" element={<AllEventsPage />} />
+                <Route path="edit-event/:id" element={<EventForm />} />
                 <Route path="contact-submissions" element={<AdminContactSubmissions />} />
               </Route>
             </Route>
