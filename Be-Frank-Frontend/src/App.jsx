@@ -19,6 +19,7 @@ import { ProtectedRoute } from "./component/ProtectedRoute"
 import { AdminDashboard } from "./pages/admin/AdminDashboard" // Keep this for the default view
 import { AdminContactSubmissions } from "./pages/admin/ContactSubmissions"
 import { AdminLayout } from "./pages/admin/AdminLayout"
+import { GalleryPage } from "./pages/gallery/Gallery";
 
 // Helper component to handle conditional layout
 const LayoutWrapper = ({ children }) => {
@@ -51,6 +52,7 @@ function App() {
             <Route path="/initiatives" element={<EventsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/ourimpact" element={<OurImpact />} />
+            <Route path="/gallery" element={<GalleryPage />} />
 
             {/* --- Admin Routes --- */}
             {/* Login page is outside the protected layout */}

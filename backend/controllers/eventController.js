@@ -308,3 +308,71 @@ export const getAllEvents = async (req, res) => {
         res.status(500).json({ message: 'Server error while fetching events.', error: error.message });
     }
 };
+
+
+
+export const getGalleryImages = async (req, res) => {
+    try {
+        const { page = 1, limit = 12 } = req.query; // Default to 12 images per page for gallery
+
+        const pageNum = parseInt(page, 10);
+        const limitNum = parseInt(limit, 10);
+        const skip = (pageNum - 1) * limitNum;
+
+        
+        const aggregationPipeline = [
+            { $match: { galleryImages: { $exists: true, $ne: [] } } }, // Only events with gallery images
+            { $sort: { date: -1 } }, // Sort events by date first
+            { $unwind: "$galleryImages" }, // Deconstruct the array
+            { $replaceRoot: { newRoot: "$galleryImages" } } // Make each image the root document
+        ];
+
+        // 4. Count total number of gallery images matching the pipeline (before skip/limit)
+        const countPipeline = [...aggregationPipeline, { $count: "totalImages" }];
+        const countResult = await Event.aggregate(countPipeline);
+        const totalImages = countResult.length > 0 ? countResult[0].totalImages : 0;
+
+        // 5. Apply skip and limit to the aggregation for pagination
+        const imagesPipeline = [...aggregationPipeline, { $skip: skip }, { $limit: limitNum }];
+        const images = await Event.aggregate(imagesPipeline);
+
+        // --- URL Refresh Logic (Similar to getAllEvents) ---
+        const BUCKET_NAME = process.env.MINIO_BUCKET_NAME || 'be-frank'; // Use correct bucket name
+        const EXPIRY_IN_SECONDS = 7 * 24 * 60 * 60; // 7 days
+        const updateNeededIds = []; // Keep track of event IDs that need saving
+        const imageUpdateMap = {}; // Map image _id to new URL/expiry
+
+        for (const image of images) {
+            if (image && image.objectName && new Date() >= new Date(image.expiresAt)) {
+                // The URL is expired, refresh it
+                const newUrl = await minioClient.presignedGetObject(BUCKET_NAME, image.objectName, EXPIRY_IN_SECONDS);
+                const newExpiresAt = new Date();
+                newExpiresAt.setSeconds(newExpiresAt.getSeconds() + EXPIRY_IN_SECONDS);
+
+                // Update the image object directly (will be sent in response)
+                image.url = newUrl;
+                image.expiresAt = newExpiresAt;
+
+                // Mark for database update using image _id (Mongoose subdocument ID)
+                imageUpdateMap[image._id.toString()] = { url: newUrl, expiresAt: newExpiresAt };
+                
+            }
+        }
+        
+
+        res.status(200).json({
+            message: 'Gallery images fetched successfully.',
+            data: images, // Send the array of image objects
+            pagination: {
+                currentPage: pageNum,
+                totalPages: Math.ceil(totalImages / limitNum),
+                totalImages,
+                limit: limitNum,
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching gallery images:', error);
+        res.status(500).json({ message: 'Server error while fetching gallery images.', error: error.message });
+    }
+};
