@@ -10,10 +10,7 @@ import { eventUpload } from '../uitils/fileUpload.js';
 
 const router = express.Router();
 
-router.get('/', getAllEvents);
-
-// GET /api/events/:id -> Get a single event
-router.get('/:id', getEventById);
+router.get('/getAllEvents', getAllEvents);
 
 // POST /api/events/create -> Create a new event
 router.post('/create', verifyToken, eventUpload, createEvent);

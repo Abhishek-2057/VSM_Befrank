@@ -65,7 +65,7 @@ export const AllEventsPage = () => {
                 limit: 10, // Desktop limit
                 ...filters
             });
-            const response = await axiosInstance.get(`/api/events?${params.toString()}`);
+            const response = await axiosInstance.get(`/api/events/getAllEvents?${params.toString()}`);
             setEvents(response.data.data);
             setPagination(response.data.pagination);
         } catch (err) {

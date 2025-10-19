@@ -180,7 +180,7 @@ export const EventForm = () => {
         if (isEditMode) {
             const fetchEventData = async () => {
                 try {
-                    const response = await axiosInstance.get(`/api/events/${id}`);
+                    const response = await axiosInstance.get(`/api/events/getEventById/${id}`);
                     const event = response.data.data;
                     setFormData({
                         eventName: event.eventName,
