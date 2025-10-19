@@ -1,5 +1,8 @@
 import express from 'express';
-import { createEvent,getEventById } from '../controllers/eventController.js';
+import {
+    createEvent, getEventById, updateEvent,
+    deleteEvent
+} from '../controllers/eventController.js';
 import { verifyToken } from '../middleware/jwtAuth.js';
 import { eventUpload } from '../uitils/fileUpload.js';
 
@@ -11,6 +14,13 @@ const router = express.Router();
 // 3. createEvent - Uploads files to MinIO and saves data to MongoDB
 router.post('/create', verifyToken, eventUpload, createEvent);
 
-router.get('/:id', getEventById);
+router.get('getEventById/:id', getEventById);
+
+router.get('/getAllEvents', getAllEvents);
+
+router.put('/updateEvent/:id', verifyToken, eventUpload, updateEvent);
+
+// Delete an event (protected)
+router.delete('/deleteEvent/:id', verifyToken, deleteEvent);
 
 export default router;

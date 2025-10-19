@@ -2,7 +2,7 @@ import  multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// Configure temp storage
+
 const uploadDir = path.join(__dirname, '../../temp-uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });

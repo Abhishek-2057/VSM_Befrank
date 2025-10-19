@@ -37,11 +37,8 @@
 // export default Event;
 
 
-// models/event.js
-
 import mongoose from 'mongoose';
 
-// A reusable schema for storing MinIO image data
 const minioImageSchema = new mongoose.Schema({
     url: { type: String, required: true },          // The 7-day presigned URL
     objectName: { type: String, required: true },   // The permanent name in the MinIO bucket
