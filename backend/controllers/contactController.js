@@ -37,3 +37,26 @@ export const getContactSubmissions = async (req, res) => {
         res.status(500).json({ message: 'Server error while fetching submissions.' });
     }
 };
+
+export const deleteContactSubmission = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const submission = await ContactSubmission.findById(id);
+
+        if (!submission) {
+            return res.status(404).json({ message: 'Submission not found.' });
+        }
+
+        await submission.deleteOne(); 
+
+        res.status(200).json({ message: 'Submission deleted successfully.' });
+
+    } catch (error) {
+        console.error('Error deleting contact submission:', error);
+        if (error.name === 'CastError') {
+             return res.status(400).json({ message: 'Invalid submission ID format.' });
+        }
+        res.status(500).json({ message: 'Server error while deleting submission.' });
+    }
+};
