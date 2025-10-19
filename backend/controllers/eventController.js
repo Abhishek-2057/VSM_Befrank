@@ -235,55 +235,69 @@ export const deleteEvent = async (req, res) => {
 
 export const getAllEvents = async (req, res) => {
     try {
-        // 1. Get query parameters with default values
         const { page = 1, limit = 10, search, startDate, endDate } = req.query;
 
-        // 2. Build the dynamic filter object for the MongoDB query
         const filter = {};
-
-        // Add case-insensitive search filter for the event name
         if (search) {
             filter.eventName = { $regex: search, $options: 'i' };
         }
-
-        // Add date range filter
         if (startDate || endDate) {
             filter.date = {};
-            if (startDate) {
-                // Ensures we query from the beginning of the start date
-                filter.date.$gte = new Date(startDate);
-            }
+            if (startDate) filter.date.$gte = new Date(startDate);
             if (endDate) {
-                // Ensures we query until the end of the end date
                 const endOfDay = new Date(endDate);
                 endOfDay.setHours(23, 59, 59, 999);
                 filter.date.$lte = endOfDay;
             }
         }
 
-        // 3. Parse pagination numbers
         const pageNum = parseInt(page, 10);
         const limitNum = parseInt(limit, 10);
         const skip = (pageNum - 1) * limitNum;
 
-        // 4. Execute queries to get paginated events and the total count
-        // We use .select() to only fetch the data needed for the table, making the API faster.
         const events = await Event.find(filter)
-            .sort({ date: -1 }) // Sort by the event date, newest first
+            .sort({ date: -1 })
             .skip(skip)
             .limit(limitNum)
-            .select('eventName location date createdAt'); // We don't need image URLs here
+            // IMPORTANT: We now select 'mainImage' to check its URL
+            .select('eventName location date createdAt mainImage'); 
 
         const totalEvents = await Event.countDocuments(filter);
-        const totalPages = Math.ceil(totalEvents / limitNum);
+        
+        // --- OPTIMIZED URL REFRESH LOGIC ---
+        const BUCKET_NAME = process.env.MINIO_BUCKET || 'events';
+        const EXPIRY_IN_SECONDS = 7 * 24 * 60 * 60;
+        const updatePromises = []; // A list to hold all the database update promises
 
-        // 5. Send the structured response
+        for (const event of events) {
+            const image = event.mainImage;
+            if (image && image.objectName && new Date() >= new Date(image.expiresAt)) {
+                // The URL is expired, refresh it
+                const newUrl = await minioClient.presignedGetObject(BUCKET_NAME, image.objectName, EXPIRY_IN_SECONDS);
+                const newExpiresAt = new Date();
+                newExpiresAt.setSeconds(newExpiresAt.getSeconds() + EXPIRY_IN_SECONDS);
+                
+                image.url = newUrl;
+                image.expiresAt = newExpiresAt;
+                
+                // Add the save operation to our list of promises
+                updatePromises.push(event.save());
+            }
+        }
+
+        // If any URLs were updated, save all the changes to the database at once
+        if (updatePromises.length > 0) {
+            await Promise.all(updatePromises);
+            console.log(`Refreshed ${updatePromises.length} expired thumbnails for the event list.`);
+        }
+        // --- END OF REFRESH LOGIC ---
+
         res.status(200).json({
             message: 'Events fetched successfully.',
             data: events,
             pagination: {
                 currentPage: pageNum,
-                totalPages,
+                totalPages: Math.ceil(totalEvents / limitNum),
                 totalEvents,
                 limit: limitNum,
             }
