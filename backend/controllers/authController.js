@@ -1,4 +1,4 @@
-import { generateToken } from "../middleware/adminAuth.js";
+import { generateToken } from "../middleware/jwtAuth.js";
 import Admin from "../models/admin.js";
 
 
