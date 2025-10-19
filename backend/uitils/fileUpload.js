@@ -1,7 +1,7 @@
-const minioClient = require('./minioConfig');
-const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+import minioClient from './minioConfig';
+import path from 'path';
+import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 const uploadToMinio = async (file) => {
   const bucketName = process.env.MINIO_BUCKET || 'receipts';

@@ -1,6 +1,6 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import  multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 // Configure temp storage
 const uploadDir = path.join(__dirname, '../../temp-uploads');
