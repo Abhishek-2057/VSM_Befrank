@@ -25,22 +25,26 @@ import { AdminLayout } from "./pages/admin/AdminLayout"
 import { GalleryPage } from "./pages/gallery/Gallery";
 import { AllEventsPage } from "./pages/admin/AllEventsPage";
 
-// Helper component to handle conditional layout
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
-  // Check if the current path starts with /admin/ but is NOT the login page
-  const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
+
+  // Identify admin pages
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isLoginPage = location.pathname === '/admin/login';
 
   return (
     <>
-      {/* Only show Navbar if NOT an admin route */}
-      {!isAdminRoute && <Navbar />}
-      {children} {/* This will render the <Routes> content */}
-      {/* Only show Footer if NOT an admin route */}
+      {/* ✅ Show Navbar on login, hide on other admin pages */}
+      {(!isAdminRoute || isLoginPage) && <Navbar />}
+
+      {children}
+
+      {/* ✅ Hide Footer only on admin login */}
       {!isAdminRoute && <Footer />}
     </>
   );
 };
+
 
 
 function App() {

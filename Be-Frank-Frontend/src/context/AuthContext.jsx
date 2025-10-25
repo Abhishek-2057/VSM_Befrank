@@ -7,6 +7,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); 
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,7 +22,9 @@ export const AuthProvider = ({ children }) => {
                     
                     // 2. Call your backend's verify route (getAdminProfile)
                     // This will throw an error if the token is invalid (e.g., 401)
-                    await axiosInstance.get('/api/admin/profile');
+                    const res = await axiosInstance.get('/api/admin/profile');
+
+                    setUser(res.data);
                     
                     // 3. If the request succeeds, the token is valid
                     setIsAuthenticated(true);
@@ -56,6 +59,9 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('adminToken', data.token);
                 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
                 setIsAuthenticated(true);
+
+                    const profileRes = await axiosInstance.get("/api/admin/profile");
+                    setUser(profileRes.data);
                 
                 console.log("Admin logged in successfully");
                 navigate('/admin/dashboard'); 
@@ -83,6 +89,7 @@ export const AuthProvider = ({ children }) => {
     const value = {
         isAuthenticated,
         loading, 
+        user,
         login,
         logout,
     };
