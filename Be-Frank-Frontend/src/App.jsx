@@ -18,7 +18,7 @@ import Footer from "./component/Footer"
 import ScrollToTop from "./component/ScrollToTop";
 
 // --- ADMIN & AUTH IMPORTS ---
-import { AuthProvider } from "./context/authContext" // Corrected import name
+import { AuthProvider } from "./context/AuthContext" // Corrected import name
 import { AdminLogin } from "./pages/admin/AdminLogin"
 import { EventForm } from "./pages/admin/EventForm"
 import { ProtectedRoute } from "./component/ProtectedRoute"
