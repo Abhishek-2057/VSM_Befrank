@@ -16,6 +16,20 @@ const YouTubeIcon = () => (
 
 
 const Footer = () => {
+
+  const handleDonateClick = (e) => {
+    e.preventDefault();
+
+    const confirmed = window.confirm(
+      "You are being redirected to our parent organization's donation website (VSM Thane). Do you want to continue?"
+    );
+
+    if (confirmed) {
+      window.location.href = "https://vsmthane.org/donate/";
+    }
+  };
+
+
   return (
     <footer className="bg-white text-black font-sans mt-8 px-4 py-6">
       <hr className="mb-4 border-black" />
@@ -28,7 +42,7 @@ const Footer = () => {
           <div className="space-y-2">
             <p className="font-bold">Vidyadaan Sahayyak Mandal (VSM Thane)</p>
             <p className="text-gray-700">
-              Office No. 2, 1st Staircase, 1st floor, Khopat ST Stand building, Khopat, Thane, Maharashtra, India – 400602
+              Office No. 2, 1st Staircase, 1st floor, Khopat ST Stand building, Khopat, Thane, Maharashtra, India – 400601
             </p>
           </div>
           <p>+91-9987437446</p>
@@ -36,13 +50,13 @@ const Footer = () => {
           <div>
             <p className="font-bold text-lg mb-2">KEEP IN TOUCH</p>
             <div className="flex justify-center md:justify-start space-x-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-black hover:text-gray-700">
+              <a href="https://www.facebook.com/vsmthane/" target="_blank" rel="noopener noreferrer" className="text-black hover:text-gray-700">
                 <FacebookIcon />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-black hover:text-gray-700">
+              <a href="https://www.instagram.com/team_be_frank?igsh=NnE3bzFuNDk3OGFk" target="_blank" rel="noopener noreferrer" className="text-black hover:text-gray-700">
                 <InstagramIcon />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-black hover:text-gray-700">
+              <a href="https://youtube.com/@karanpardeshi3667?si=TknRyOS_5FR9hbaY" target="_blank" rel="noopener noreferrer" className="text-black hover:text-gray-700">
                 <YouTubeIcon />
               </a>
             </div>
@@ -54,12 +68,20 @@ const Footer = () => {
           <div className="flex flex-col space-y-4">
             <a href="/about" className="hover:underline">About us</a>
             <a href="/" className="hover:underline">Our events</a>
-            <a href="/contact" className="hover:underline">Contact us</a>
+           
           </div>
           <div className="flex flex-col space-y-4">
-            <a href="/" className="hover:underline">Donate</a>
-            <a href="/" className="hover:underline">Admission</a>
-            <a href="/" className="hover:underline">Join us</a>
+            <a
+              href="https://vsmthane.org/donate/"
+              onClick={handleDonateClick}
+              className="hover:underline cursor-pointer"
+            >
+              Donate
+            </a>
+
+            <a href="/contact" className="hover:underline">Contact us</a>
+            {/* <a href="/" className="hover:underline">Admission</a> */}
+            {/* <a href="/" className="hover:underline">Join us</a> */}
           </div>
         </div>
         

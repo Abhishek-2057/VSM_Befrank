@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
+import HeroImage from '../../assets/OurInitiativesimage/contactimage.jpg'; // Example Hero
 
 const ContactForm = () => {
     // State for form input values
@@ -178,17 +179,32 @@ const ContactForm = () => {
 // ---== Main Contact Page Component ==---
 export const ContactPage = () => {
     return (
-        <div className="py-4">
-            <div className="mx-auto max-w-[85vw]">
-                
-                <div className="text-left pb-6">
-                    <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight">
-                        <span className="text-[#f48220]">we are set to build</span>
-                        <br />
-                        <span className="text-[#2792d0]">a better way to fun and learn!</span>
-                    </h1>
+        <div className="">
+
+            <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                    <img
+                        src={HeroImage}
+                        alt="Our Initiatives"
+                        className="w-full h-full object-cover"
+                    />
+                    {/* Dark Overlay */}
+                    <div className="absolute inset-0 bg-black/50"></div>
                 </div>
 
+                {/* Text Content */}
+                <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full">
+                    <div className="text-left">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#f48321]">
+                            Contact Us
+                        </h1>
+                    </div>
+                </div>
+            </section>
+
+            <div className="mx-auto py-8 sm:py-12 md:py-16 max-w-[85vw]">
+                
                 <div className="flex flex-col md:flex-row gap-8 lg:gap-12 rounded-lg">
                     <div className="w-full md:w-1/2 flex items-stretch">
                          <ContactForm />
@@ -217,7 +233,7 @@ export const ContactPage = () => {
                         <address className="text-base sm:text-lg text-slate-600 not-italic leading-relaxed">
                             <strong className="text-slate-800">Vidyadaan Sahayak Mandal (VSM Thane)</strong><br />
                             Office No. 2, 1st Staircase, 1st floor, Khopat ST Stand building, Khopat,<br />
-                            Thane, Maharashtra, India – 400602
+                            Thane, Maharashtra, India – 400601
                         </address>
                     </div>
 

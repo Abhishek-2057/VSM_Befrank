@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../utils/axiosInstance'; // Adjust path if needed
 import { EventCard } from '../../component/EventCard'; // Adjust path
 import EventDetailModal from '../../component/EventModel'; // Adjust path
-import PlaceholderImage from '../../assets/aboutImage4.jpg'; // Keep for fallback
+import PlaceholderImage from '../../assets/aboutImage3.jpg'; // Keep for fallback
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Icons for pagination
+import HeroImage from '../../assets/OurInitiativesimage/eventimage.jpeg'; // Example Hero
 
 export const EventsPage = () => {
     // State for the list of events fetched from backend
@@ -77,13 +78,29 @@ export const EventsPage = () => {
     const paginationButtonClass = "px-4 py-2 mx-1 border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
     return (
-        <div className="min-h-screen p-4 sm:p-6 lg:p-8 relative bg-gray-50">
-            <div className="max-w-7xl mx-auto">
-                {/* --- Page Title --- */}
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 text-center sm:text-left">
-                    <span className="text-[#f48321]">we are set to build</span><br/>
-                    <span className="text-[#2692d1]">a better way to fun and learn!</span>
-                </h1>
+        <div className="min-h-screen relative bg-gray-50">
+            <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                    <img
+                        src={HeroImage}
+                        alt="Our Initiatives"
+                        className="w-full h-full object-cover object-bottom"
+                    />
+                    {/* Dark Overlay */}
+                    <div className="absolute inset-0 bg-black/50"></div>
+                </div>
+
+                {/* Text Content */}
+                <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full">
+                    <div className="text-left">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#f48321]">
+                            School Chale Hum Events
+                        </h1>
+                    </div>
+                </div>
+            </section>
+            <div className="max-w-7xl mx-auto py-8 sm:py-12 md:py-16">
 
                 {/* --- Loading & Error States --- */}
                 {loading && (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 // --- New SVG Play Icon to match the image ---
 const PlayIcon = () => (
-  <svg className="w-20 h-20 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <svg className="w-16 h-16 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M9.5,16.5v-9l7,4.5L9.5,16.5z"></path>
   </svg>
 );
@@ -19,7 +19,7 @@ const YouTubePlayer = ({ videoId, onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-4xl aspect-video" 
+        className="relative w-full max-w-3xl aspect-video" 
         onClick={(e) => e.stopPropagation()}
       >
         <iframe
@@ -62,11 +62,11 @@ const VideoCarousel = () => {
 
   // --- YouTube Video Links ---
   const videos = [
-    { id: 1, url: 'https://www.youtube.com/watch?v=LXb3EKWsInQ' },
-    { id: 2, url: 'https://www.youtube.com/watch?v=3JZ_D3ELwOQ' },
-    { id: 3, url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-    { id: 4, url: 'https://www.youtube.com/watch?v=Y_plhk1FUQA' },
-    { id: 5, url: 'https://www.youtube.com/watch?v=6ZfuNTqbHE8' },
+    // { id: 1, url: 'https://youtu.be/xSjqfdAFpC0' },
+    // { id: 2, url: 'https://youtu.be/xSjqfdAFpC0' },
+    { id: 3, url: 'https://youtu.be/xSjqfdAFpC0' },
+    // { id: 4, url: 'https://www.youtube.com/watch?v=Y_plhk1FUQA' },
+    // { id: 5, url: 'https://www.youtube.com/watch?v=6ZfuNTqbHE8' },
   ];
   
   // --- Event Handlers ---
@@ -85,8 +85,8 @@ const VideoCarousel = () => {
 
   // --- Render Logic ---
   return (
-    <section className="bg-gray-100 py-12 md:py-20 font-sans w-full overflow-x-clip">
-      <div className="relative h-[250px] md:h-[380px] lg:h-[474px] flex items-center justify-center">
+    <section className="bg-gray-100 py-8 md:py-10 font-sans w-full overflow-x-clip">
+      <div className="relative h-[200px] md:h-[300px] lg:h-[380px] flex items-center justify-center">
         {videos.map((video, index) => {
           const { id: videoId, thumbnailUrl } = getYoutubeData(video.url);
           const isActive = index === currentIndex;
@@ -108,8 +108,9 @@ const VideoCarousel = () => {
           }
           
           const containerSize = isActive 
-            ? 'w-11/12 md:w-[872px] h-full' 
-            : 'w-10/12 md:w-[700px] h-5/6';
+            ? 'w-10/12 md:w-[700px] h-full'   
+            : 'w-9/12 md:w-[560px] h-5/6';   
+
 
           return (
             <div

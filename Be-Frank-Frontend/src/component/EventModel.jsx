@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, CircleX } from 'lucide-react'; // Changed icon back as per your code
 import axiosInstance from '../utils/axiosInstance'; // Adjust path
-import PlaceholderImage from '../assets/aboutImage4.jpg'; // Adjust path for fallback image
+import PlaceholderImage from '../assets/aboutImage3.jpg'; // Adjust path for fallback image
 
 const EventDetailModal = ({ eventId, onClose }) => {
     // State to hold the fetched event details

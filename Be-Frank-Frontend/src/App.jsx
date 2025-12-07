@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"; //
 import Home from "./pages/home/Home"
 import { About } from "./pages/about/about"
 import { EventsPage } from "./pages/Our Initiatives/EventPage"
+import { OurInitiative } from "./pages/Our Initiatives/OurInitiatives"
 import { ContactPage } from "./pages/contact/contact"
 import OurImpact from "./pages/Our Impact/OurImpact"
 
@@ -14,6 +15,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from "./component/Navbar"
 import Footer from "./component/Footer"
+import ScrollToTop from "./component/ScrollToTop";
+
 // --- ADMIN & AUTH IMPORTS ---
 import { AuthProvider } from "./context/authContext" // Corrected import name
 import { AdminLogin } from "./pages/admin/AdminLogin"
@@ -24,6 +27,9 @@ import { AdminContactSubmissions } from "./pages/admin/ContactSubmissions"
 import { AdminLayout } from "./pages/admin/AdminLayout"
 import { GalleryPage } from "./pages/gallery/Gallery";
 import { AllEventsPage } from "./pages/admin/AllEventsPage";
+
+
+
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
@@ -63,15 +69,20 @@ function App() {
           pauseOnHover
           theme="light"
         />
+        <ScrollToTop />
         <LayoutWrapper>
           <Routes>
             {/* --- Public Routes --- */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/initiatives" element={<EventsPage />} />
+            <Route path="/events" element={<EventsPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/ourimpact" element={<OurImpact />} />
-            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/our-initiatives" element={<OurInitiative />} />
+            {/* <Route path="/gallery" element={<GalleryPage />} /> */}
+
+
+            
+
 
             {/* --- Admin Routes --- */}
             {/* Login page is outside the protected layout */}

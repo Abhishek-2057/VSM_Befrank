@@ -1,191 +1,245 @@
-import React from "react";
-import EventCard from "../EventCard";
 
-import CardCarousel from "../carousal/CardCarousal";
 
-// The main section component with the corrected layout
+// import React, { useEffect, useState } from "react";
+// import { Link } from "react-router-dom";
+// import CardCarousel from "../carousal/CardCarousal";
+// import axiosInstance from "../../utils/axiosInstance";
+// import EventDetailModal from "../../component/EventModel";
+
 // const EventsSection = () => {
-//   const events = [
-//     {
-//       id: 1,
-//       image:
-//         "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-1.jpg",
-//       title: "Event name",
-//       location: "Event location",
-//       date: "29/11/2024",
-//     },
-//     {
-//       id: 2,
-//       image:
-//         "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-2.jpg",
-//       title: "Event name",
-//       location: "Event location",
-//       date: "29/11/2024",
-//     },
-//     {
-//       id: 3,
-//       image:
-//         "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-3.jpg",
-//       title: "Event name",
-//       location: "Event location",
-//       date: "29/11/2024",
-//     },
-//   ];
+//   const [events, setEvents] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [selectedEventId, setSelectedEventId] = useState(null);
+
+//   const fetchLatestEvents = async () => {
+//     try {
+//       const res = await axiosInstance.get("/api/events/latest");
+//       setEvents(res.data.data || []);
+//     } catch (error) {
+//       console.error("Failed to fetch events:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchLatestEvents();
+//   }, []);
+
+//   const handleKnowMore = (eventId) => {
+//     setSelectedEventId(eventId);
+//   };
+
+//   const handleCloseModal = () => {
+//     setSelectedEventId(null);
+//   };
 
 //   return (
-//     <section className="py-16 bg-gray-50">
-//       <div className="container mx-auto px-6">
-//         {/* Heading */}
-//         <div className="relative flex items-center justify-center mb-12">
-//           <h2 className="text-3xl md:text-4xl font-bold text-orange-500">
-//             Our recent events
-//           </h2>
-
-//           <div className="absolute right-60">
-//             <button className="text-blue-600 font-medium hover:underline">
-//               View all events
-//             </button>
+//     <div className="bg-[#f8f8f9] w-full py-10 sm:py-12 md:py-16 px-3 sm:px-4 md:px-6">
+//       <div className="max-w-screen-xl mx-auto w-full">
+//         {/* Header */}
+//         <div className="relative flex items-center justify-center mb-8 sm:mb-10 md:mb-12 px-1 sm:px-0">
+//           <div className="inline-block w-full">
+//             <h2 className="text-[#f48321] font-bold text-lg sm:text-2xl md:text-3xl leading-snug">
+//               Our Recent Events
+//             </h2>
+//             <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-1"></div>
 //           </div>
+          
+
+//           {/* Desktop View More */}
+//           <Link
+//             to="/initiatives"
+//             className="absolute right-3 sm:right-6 md:right-10 text-[#2692d1] font-medium text-sm sm:text-base md:text-lg hidden lg:block hover:underline"
+//           >
+//             View All Events
+//           </Link>
 //         </div>
 
-//         {/* Main container for arrows and cards */}
-//         <div className="flex items-center justify-center gap-4">
-//           {/* Left Arrow */}
-//           <button className="bg-white hover:bg-gray-100 rounded-full p-2 shadow-md">
-//             <svg
-//               xmlns="http://www.w3.org/2000/svg"
-//               fill="none"
-//               viewBox="0 0 24 24"
-//               strokeWidth={1.5}
-//               stroke="currentColor"
-//               className="w-6 h-6 text-gray-600"
-//             >
-//               <path
-//                 strokeLinecap="round"
-//                 strokeLinejoin="round"
-//                 d="M15.75 19.5L8.25 12l7.5-7.5"
-//               />
-//             </svg>
-//           </button>
-
-//           {/* Cards Container */}
-//           <div className="flex gap-8 justify-center overflow-x-auto py-2">
-//             {events.map((event) => (
-//               <EventCard
-//                 key={event.id}
-//                 image={event.image}
-//                 title={event.title}
-//                 location={event.location}
-//                 date={event.date}
-//               />
-//             ))}
+//         {/* Loading / Carousel */}
+//         {loading ? (
+//           <p className="text-center text-gray-500 text-sm sm:text-base">
+//             Loading events...
+//           </p>
+//         ) : (
+//           <div className="w-full overflow-hidden">
+//             <CardCarousel
+//               cards={events.map((event) => ({
+//                 id: event._id,
+//                 image: event?.mainImage?.url,
+//                 title: event.eventName,
+//                 location: event.location,
+//                 date: event.date
+//                   ? new Date(event.date).toLocaleDateString("en-IN")
+//                   : "N/A",
+//                 onKnowMore: () => handleKnowMore(event._id),
+//               }))}
+//             />
 //           </div>
+//         )}
 
-//           {/* Right Arrow */}
-//           <button className="bg-white hover:bg-gray-100 rounded-full p-2 shadow-md">
-//             <svg
-//               xmlns="http://www.w3.org/2000/svg"
-//               fill="none"
-//               viewBox="0 0 24 24"
-//               strokeWidth={1.5}
-//               stroke="currentColor"
-//               className="w-6 h-6 text-gray-600"
-//             >
-//               <path
-//                 strokeLinecap="round"
-//                 strokeLinejoin="round"
-//                 d="M8.25 4.5l7.5 7.5-7.5 7.5"
-//               />
-//             </svg>
-//           </button>
+//         {/* Mobile View More */}
+//         <div className="text-center mt-8 sm:mt-10 md:mt-12 lg:hidden">
+//           <Link
+//             to="/initiatives"
+//             className="text-[#2692d1] font-medium text-base sm:text-lg hover:underline"
+//           >
+//             View All Events
+//           </Link>
 //         </div>
 //       </div>
-//     </section>
+
+//       {/* Modal */}
+//       {selectedEventId && (
+//         <EventDetailModal eventId={selectedEventId} onClose={handleCloseModal} />
+//       )}
+//     </div>
 //   );
 // };
 
 // export default EventsSection;
 
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import CardCarousel from "../carousal/CardCarousal";
+import axiosInstance from "../../utils/axiosInstance";
+import EventDetailModal from "../../component/EventModel";
+
 const EventsSection = () => {
-  // Dummy data for the event cards
-  const cardData = [
-    {
-      id: 3,
-      image:
-        "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-3.jpg",
-      title: "Community Cleanup",
-      location: "City Park",
-      date: "15/10/2024",
-    },
-    {
-      id: 2,
-      image:
-        "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-2.jpg",
-      title: "Tech Conference",
-      location: "Convention Center",
-      date: "22/10/2024",
-    },
-    {
-      id: 1,
-      image:
-        "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-1.jpg",
-      title: "Music Festival",
-      location: "Main Stage",
-      date: "05/11/2024",
-    },
-    {
-      id: 1,
-      image:
-        "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-1.jpg",
-      title: "Art Exhibition",
-      location: "Downtown Gallery",
-      date: "12/11/2024",
-    },
-    {
-      id: 1,
-      image:
-        "https://vsmthane.org/wp-content/uploads/2022/05/Be-Frank-Sessions-VSM-Thane-NGO-1.jpg",
-      title: "Food Fair",
-      location: "Central Square",
-      date: "19/11/2024",
-    },
-  ];
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedEventId, setSelectedEventId] = useState(null);
+
+  const fetchLatestEvents = async () => {
+    try {
+      const res = await axiosInstance.get("/api/events/latest");
+      setEvents(res.data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLatestEvents();
+  }, []);
+
+  const handleKnowMore = (eventId) => setSelectedEventId(eventId);
+  const handleCloseModal = () => setSelectedEventId(null);
 
   return (
-    <div className="bg-[#f8f8f9] w-full py-16 sm:py-16 px-4">
-      <div className="max-w-screen-xl mx-auto ">
-        {/* Section Header */}
-        <div className="relative flex justify-center items-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#f48321] text-center">
-            Our Recent Events
-          </h2>
-          <a
-            href="#"
-            className="absolute right-10 text-[#2692d1] font-medium text-lg hidden lg:block hover:underline"
+    <div className="bg-[#f8f8f9] w-full py-10 sm:py-12 md:py-16 px-3 sm:px-4 md:px-6">
+      <div className="max-w-screen-xl mx-auto w-full">
+        {/* Header */}
+        <div className="relative flex items-center justify-center mb-8 sm:mb-10 md:mb-12 px-1 sm:px-0">
+          <div className="inline-block w-full">
+            <h2 className="text-[#f48321] font-bold text-lg sm:text-2xl md:text-3xl leading-snug">
+              Our Recent Events
+            </h2>
+            <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-1" />
+          </div>
+
+          {/* Desktop View More */}
+          <Link
+            to="/events"
+            className="absolute right-3 sm:right-6 md:right-10 text-[#2692d1] font-medium text-sm sm:text-base md:text-lg hidden lg:block hover:underline"
           >
-            View all Events
-          </a>
+            View All Events
+          </Link>
         </div>
 
-        {/* Carousel Component */}
-    
-           <CardCarousel cards={cardData} />
-       
-        
+        {/* Loading / Content */}
+        {loading ? (
+          <p className="text-center text-gray-500 text-sm sm:text-base">
+            Loading events...
+          </p>
+        ) : (
+          <>
+            {/* ---- Desktop/Laptop (lg+): keep carousel (with arrows inside your component) ---- */}
+            <div className="hidden lg:block w-full overflow-hidden">
+              <CardCarousel
+                cards={events.map((event) => ({
+                  id: event._id,
+                  image: event?.mainImage?.url,
+                  title: event.eventName,
+                  location: event.location,
+                  date: event.date
+                    ? new Date(event.date).toLocaleDateString("en-IN")
+                    : "N/A",
+                  onKnowMore: () => handleKnowMore(event._id),
+                }))}
+              />
+            </div>
 
-        {/* View All link for mobile/tablet */}
-        <div className="text-center mt-12 lg:hidden">
-          <a
-            href="#"
-            className="text-[#2692d1] font-medium text-lg hover:underline"
-          >
-            View all Events
-          </a>
-        </div>
+            {/* ---- Mobile & Tablet (< lg): stacked cards, no arrows ---- */}
+            <div className="block lg:hidden">
+              <div className="grid grid-cols-1 gap-6">
+                {events.slice(0, 3).map((event) => (
+                  <div
+                    key={event._id}
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                  >
+                    {/* Image */}
+                    <div className="w-full">
+                      <img
+                        src={event?.mainImage?.url}
+                        alt={event?.eventName || "Event Image"}
+                        className="w-full h-52 sm:h-64 object-cover"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src =
+                            "https://placehold.co/800x500/eeeeee/666666?text=Event";
+                        }}
+                      />
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 sm:p-5">
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-900">
+                        {event.eventName}
+                      </h3>
+
+                      <div className="mt-2 text-sm sm:text-base text-slate-600">
+                        {event.location ? <p>{event.location}</p> : null}
+                        <p className="mt-1">
+                          {event.date
+                            ? new Date(event.date).toLocaleDateString("en-IN")
+                            : "N/A"}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => handleKnowMore(event._id)}
+                        className="mt-4 inline-flex items-center justify-center px-4 py-2 text-sm sm:text-base font-medium rounded-md bg-[#2692d1] text-white hover:opacity-90"
+                      >
+                        Know More
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile View More */}
+              <div className="text-center mt-8 sm:mt-10 md:mt-12">
+                <Link
+                  to="/initiatives"
+                  className="text-[#2692d1] font-medium text-base sm:text-lg hover:underline"
+                >
+                  View All Events
+                </Link>
+              </div>
+            </div>
+          </>
+        )}
       </div>
+
+      {/* Modal */}
+      {selectedEventId && (
+        <EventDetailModal eventId={selectedEventId} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };
-
 
 export default EventsSection;

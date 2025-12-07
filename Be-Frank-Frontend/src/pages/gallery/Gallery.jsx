@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../utils/axiosInstance'; // Adjust path
-import PlaceholderImage from '../../assets/aboutImage4.jpg'; // Adjust path
+import PlaceholderImage from '../../assets/aboutImage3.jpg'; // Adjust path
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const GalleryPage = () => {
