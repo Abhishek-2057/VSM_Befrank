@@ -157,20 +157,21 @@ const EventsSection = () => {
         ) : (
           <>
             {/* ---- Desktop/Laptop (lg+): keep carousel (with arrows inside your component) ---- */}
-            <div className="hidden lg:block w-full overflow-hidden">
-              <CardCarousel
-                cards={events.map((event) => ({
-                  id: event._id,
-                  image: event?.mainImage?.url,
-                  title: event.eventName,
-                  location: event.location,
-                  date: event.date
-                    ? new Date(event.date).toLocaleDateString("en-IN")
-                    : "N/A",
-                  onKnowMore: () => handleKnowMore(event._id),
-                }))}
-              />
-            </div>
+            {events.length != 0 && <div className="hidden lg:block w-full overflow-hidden">
+                <CardCarousel
+                  cards={events.map((event) => ({
+                    id: event._id,
+                    image: event?.mainImage?.url,
+                    title: event.eventName,
+                    location: event.location,
+                    date: event.date
+                      ? new Date(event.date).toLocaleDateString("en-IN")
+                      : "N/A",
+                    onKnowMore: () => handleKnowMore(event._id),
+                  }))}
+                />
+              </div>
+            }
 
             {/* ---- Mobile & Tablet (< lg): stacked cards, no arrows ---- */}
             <div className="block lg:hidden">
