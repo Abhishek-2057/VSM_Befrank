@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { User, CircleUser } from 'lucide-react'; // Import the User icon from lucide-react
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../context/AuthContext";
 import vsmlogo from "../assets/vsmthane-logo.jpg"
 import { Menu,X } from "lucide-react";
 

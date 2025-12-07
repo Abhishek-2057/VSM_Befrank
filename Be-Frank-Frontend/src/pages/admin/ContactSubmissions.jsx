@@ -234,7 +234,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../context/AuthContext';
 import { Eye, Trash2, Mail, Phone, User, Calendar, MessageSquare } from 'lucide-react';
 import { X } from 'lucide-react';
 

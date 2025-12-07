@@ -71,7 +71,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { PlusSquare, Mail, LogOut, LayoutDashboard } from 'lucide-react'; // Icons
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../context/AuthContext';
 
 
 export const Sidebar = () => {
