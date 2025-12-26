@@ -291,6 +291,7 @@ export const AllEventsPage = () => {
                   event={event}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  onView={handleView}
                 />
               ))}
             </div>
