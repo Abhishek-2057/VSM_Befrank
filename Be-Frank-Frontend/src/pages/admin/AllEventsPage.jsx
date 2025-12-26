@@ -13,8 +13,9 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import EventDetailModal from "../../component/EventModel";
 
-const EventCard = ({ event, onEdit, onDelete }) => {
+const EventCard = ({ event, onEdit, onDelete, onView }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const eventDate = new Date(event.date).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -80,12 +81,12 @@ const EventCard = ({ event, onEdit, onDelete }) => {
           <span className="truncate">{event.location}</span>
         </div>
 
-        <Link
-          to={`/events/${event._id}`}
+        <button
+          onClick={() => onView(event._id)}
           className="block w-full text-center bg-gradient-to-r from-[#2692d1] to-[#1e7bb8] text-white py-2.5 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-medium text-sm"
         >
           Know More
-        </Link>
+        </button>
       </div>
     </div>
   );
@@ -106,6 +107,7 @@ export const AllEventsPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const navigate = useNavigate();
+  const [selectedEventId, setSelectedEventId] = useState(null);
 
   const fetchEvents = useCallback(
     async (page = 1) => {
@@ -146,6 +148,14 @@ export const AllEventsPage = () => {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleView = (id) => {
+    setSelectedEventId(id);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedEventId(null);
   };
 
   const handleEdit = (id) => {
@@ -348,6 +358,13 @@ export const AllEventsPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {selectedEventId && (
+        <EventDetailModal
+          eventId={selectedEventId}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );
