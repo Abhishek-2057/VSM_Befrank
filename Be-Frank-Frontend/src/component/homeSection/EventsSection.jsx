@@ -224,7 +224,7 @@ const EventsSection = () => {
               {/* Mobile View More */}
               <div className="text-center mt-8 sm:mt-10 md:mt-12">
                 <Link
-                  to="/initiatives"
+                  to="/events"
                   className="text-[#2692d1] font-medium text-base sm:text-lg hover:underline"
                 >
                   View All Events
