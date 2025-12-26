@@ -27,6 +27,7 @@ import { AdminContactSubmissions } from "./pages/admin/ContactSubmissions"
 import { AdminLayout } from "./pages/admin/AdminLayout"
 import { GalleryPage } from "./pages/gallery/Gallery";
 import { AllEventsPage } from "./pages/admin/AllEventsPage";
+import  ImageCompressor from "./component/ImageCompressor";
 
 
 
@@ -81,7 +82,7 @@ function App() {
             {/* <Route path="/gallery" element={<GalleryPage />} /> */}
 
 
-            
+            <Route path="/compress" element={< ImageCompressor />} />
 
 
             {/* --- Admin Routes --- */}
