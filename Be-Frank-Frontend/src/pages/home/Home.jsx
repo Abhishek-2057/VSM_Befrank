@@ -14,7 +14,10 @@ import VideoCarousel from '../../component/carousal/VidoeCarousal';
 const Home = () => {
   return (
     <div className="min-h-screen">
-      <SEO title="Home Page" description="Welcome to the home page of my site" />
+      <SEO
+        title="Be Frank | Vidyadaan Sahayyak Mandal, Thane"
+        description="Welcome to the home page of my site"
+      />
       <ImageCaroursal />
       <AboutSection />
       <EventsSection />
@@ -23,7 +26,7 @@ const Home = () => {
       <TestimonialSection />
       <VideoCarousel />
     </div>
-  )
+  );
 }
 
 export default Home
