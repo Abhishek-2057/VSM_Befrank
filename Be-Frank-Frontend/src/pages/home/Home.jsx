@@ -1,5 +1,5 @@
 import React from 'react'
-
+import SEO from '../../component/SEO';
 import ImageCaroursal from '../../component/homeSection/ImageCaroursal';
 import AboutSection from '../../component/homeSection/AboutSection';
 import EventsSection from '../../component/homeSection/EventsSection';
@@ -10,9 +10,11 @@ import  TestimonialSection from '../../component/homeSection/TestimonialSection'
 import VideoCarousel from '../../component/carousal/VidoeCarousal';
 
 
+
 const Home = () => {
   return (
     <div className="min-h-screen">
+      <SEO title="Home Page" description="Welcome to the home page of my site" />
       <ImageCaroursal />
       <AboutSection />
       <EventsSection />

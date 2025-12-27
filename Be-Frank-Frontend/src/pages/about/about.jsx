@@ -1,5 +1,5 @@
 import React from 'react';
-
+import SEO from '../../component/SEO';
 import Hero1 from '../../assets/aboutImage3.jpg';
 import about1 from '../../assets/aboutimages/image1.png';
 import about2 from '../../assets/aboutimages/image2.jpg';
@@ -53,6 +53,10 @@ export const About = () => {
 
     return (
         <div className="bg-white">
+
+
+        <SEO title="About Us" description="Learn more about our mission and team on the About Us page." />
+
             <section className="relative w-full h-[30vh] md:h-[60vh] overflow-hidden">
                 
                 {/* Background Image */}

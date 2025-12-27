@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
 import HeroImage from '../../assets/OurInitiativesimage/contactimage.jpg'; // Example Hero
+import SEO from '../../component/SEO';
 
 const ContactForm = () => {
     // State for form input values
@@ -180,6 +181,8 @@ const ContactForm = () => {
 export const ContactPage = () => {
     return (
         <div className="">
+            <SEO title="Contact Us" description="Get in touch with us through the Contact Us page." />
+
 
             <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
                 {/* Background Image */}

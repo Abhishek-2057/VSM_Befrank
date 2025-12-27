@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import SEO from '../../component/SEO';
 
 // Reuse existing images or import specific initiative images
 import HeroImage from '../../assets/OurInitiativesimage/image2.jpg'; // Example Hero
@@ -35,6 +36,9 @@ export const OurInitiative = () => {
 
     return (
         <div className="bg-white">
+
+        <SEO title="Our Initiatives" description="Learn more about our initiatives at Be Frank" />
+
 
             {/* --- HERO SECTION (Same style as About Us) --- */}
             <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
