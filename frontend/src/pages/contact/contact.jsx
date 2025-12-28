@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
 import HeroImage from '../../assets/OurInitiativesimage/contactimage.jpg'; // Example Hero
 import SEO from '../../component/SEO';
+import { toast } from "react-toastify";
 
 const ContactForm = () => {
     // State for form input values
@@ -49,35 +50,55 @@ const ContactForm = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSubmitSuccess(false); 
-        setSubmitError('');
-        const validationErrors = validate();
-        setErrors(validationErrors);
+      e.preventDefault();
+      setSubmitSuccess(false);
+      setSubmitError("");
 
-        if (Object.keys(validationErrors).length === 0) {
-            setIsSubmitting(true);
-            try {
-                const response = await axiosInstance.post('/api/contact/submit', formData);
+      const validationErrors = validate();
+      setErrors(validationErrors);
 
-                setSubmitSuccess(true); 
-                setFormData({
-                    name: '',
-                    email: '',
-                    phone: '',
-                    message: '',
-                    agree: false,
-                });
-                setErrors({}); 
+      if (Object.keys(validationErrors).length !== 0) return;
 
-            } catch (error) {
-                console.error("Submission failed:", error.response?.data || error.message);
-                setSubmitError(error.response?.data?.message || 'Submission failed. Please try again.');
-            } finally {
-                setIsSubmitting(false);
-            }
-        }
+      setIsSubmitting(true);
+      const toastId = toast.loading("Submitting your message...");
+
+      try {
+        await axiosInstance.post("/api/contact/submit", formData);
+
+        toast.update(toastId, {
+          render: "Message sent successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+
+        setSubmitSuccess(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+          agree: false,
+        });
+        setErrors({});
+      } catch (error) {
+        const msg =
+          error.response?.data?.message ||
+          "Submission failed. Please try again.";
+
+        toast.update(toastId, {
+          render: msg,
+          type: "error",
+          isLoading: false,
+          autoClose: 4000,
+        });
+
+        setSubmitError(msg);
+      } finally {
+        setIsSubmitting(false);
+      }
     };
+
 
     const inputClasses = (fieldName) => 
         `w-full bg-white rounded-lg px-4 py-3 text-base border transition-all duration-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none ${
@@ -85,94 +106,115 @@ const ContactForm = () => {
         }`;
 
     return (
-        <form 
-            onSubmit={handleSubmit} 
-            className="w-full max-w-lg mx-auto bg-gray-50 p-6 sm:p-8 rounded-2xl shadow-sm"
-            noValidate // Disable default browser validation
-        >
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 text-left">Contact Us</h2>
-            <div className="w-24 sm:w-48 border border-yellow-400 my-4" />
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-lg mx-auto bg-gray-50 p-6 sm:p-8 rounded-2xl shadow-sm"
+        noValidate // Disable default browser validation
+      >
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 text-left">
+          Contact Us
+        </h2>
+        <div className="w-24 sm:w-48 border border-yellow-400 my-4" />
 
-            {submitSuccess && <p className="text-green-600 mb-4">Thank you! Your message has been sent successfully.</p>}
-            {submitError && <p className="text-red-600 mb-4">{submitError}</p>}
-            
-            <div className="space-y-5">
-                <div>
-                    <input 
-                        type="text"
-                        name="name"
-                        placeholder="Enter Your Name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className={inputClasses("name")}
-                    />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                </div>
-                
-                <div>
-                    <input 
-                        type="email"
-                        name="email"
-                        placeholder="Enter Your Email Address"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className={inputClasses("email")}
-                    />
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                </div>
-                
-                <div>
-                    <input 
-                        type="tel"
-                        name="phone"
-                        placeholder="Enter Your Phone Number"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className={inputClasses("phone")}
-                    />
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                </div>
-                
-                <div>
-                    <textarea
-                        name="message"
-                        placeholder="Message"
-                        rows={4}
-                        value={formData.message}
-                        onChange={handleChange}
-                        className={inputClasses("message")}
-                    />
-                    {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
-                </div>
-                
-                <div>
-                    <div className="flex items-center">
-                        <input
-                            type="checkbox"
-                            id="agree"
-                            name="agree"
-                            checked={formData.agree}
-                            onChange={handleChange}
-                            className="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400"
-                        />
-                        <label htmlFor="agree" className="ml-2 text-sm text-gray-700">
-                            Yes, I agree with sharing my details with VSM Thane.
-                        </label>
-                    </div>
-                     {errors.agree && <p className="text-red-500 text-sm mt-1">{errors.agree}</p>}
-                </div>
+        {submitSuccess && (
+          <p className="text-green-600 mb-4">
+            Thank you! Your message has been sent successfully.
+          </p>
+        )}
+        {submitError && <p className="text-red-600 mb-4">{submitError}</p>}
 
-                <div className="text-left">
-                    <button
-                        type="submit"
-                        disabled={isSubmitting} 
-                        className="bg-[#FFCB05] hover:bg-yellow-500 text-black font-semibold rounded-lg text-md px-12 py-2 transition-colors duration-300 disabled:bg-gray-400"
-                    >
-                        {isSubmitting ? 'Submitting...' : 'Submit'}
-                    </button>
-                </div>
+        <div className="space-y-5">
+          <div>
+            <input
+              type="text"
+              name="name"
+              disabled={isSubmitting}
+              placeholder="Enter Your Name"
+              value={formData.name}
+              onChange={handleChange}
+              className={inputClasses("name")}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="email"
+              name="email"
+              disabled={isSubmitting}
+              placeholder="Enter Your Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              className={inputClasses("email")}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="tel"
+              name="phone"
+              disabled={isSubmitting}
+              placeholder="Enter Your Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              className={inputClasses("phone")}
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
+          </div>
+
+          <div>
+            <textarea
+              name="message"
+              disabled={isSubmitting}
+              placeholder="Message"
+              rows={4}
+              value={formData.message}
+              onChange={handleChange}
+              className={inputClasses("message")}
+            />
+            {errors.message && (
+              <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+            )}
+          </div>
+
+          <div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="agree"
+                name="agree"
+                disabled={isSubmitting}
+                checked={formData.agree}
+                onChange={handleChange}
+                className="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400"
+              />
+              <label htmlFor="agree" className="ml-2 text-sm text-gray-700">
+                Yes, I agree with sharing my details with VSM Thane.
+              </label>
             </div>
-        </form>
+            {errors.agree && (
+              <p className="text-red-500 text-sm mt-1">{errors.agree}</p>
+            )}
+          </div>
+
+          <div className="text-left">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-[#FFCB05] hover:bg-yellow-500 text-black font-semibold rounded-lg text-md px-12 py-2 transition-colors duration-300 disabled:bg-gray-400"
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
+          </div>
+        </div>
+      </form>
     );
 };
 

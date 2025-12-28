@@ -1,31 +1,51 @@
 import ContactSubmission from '../models/ContactSubmission.js';
+import { sendContactEmail } from '../uitils/emailService.js';
 
 export const submitContactForm = async (req, res) => {
-    const { name, email, phone, message, agree } = req.body;
+  const { name, email, phone, message, agree } = req.body;
 
-    if (!name || !email || !phone || !message || agree !== true) {
-        return res.status(400).json({ message: 'All fields are required and agreement must be checked.' });
-    }
+  if (!name || !email || !phone || !message || agree !== true) {
+    return res
+      .status(400)
+      .json({
+        message: "All fields are required and agreement must be checked.",
+      });
+  }
 
+  try {
+    // 1. Save to Database
+    const newSubmission = new ContactSubmission({
+      name,
+      email,
+      phone,
+      message,
+      agree,
+    });
+
+    const savedSubmission = await newSubmission.save();
+
+    // 2. Send Email to Admin
     try {
-        const newSubmission = new ContactSubmission({
-            name,
-            email,
-            phone,
-            message,
-            agree,
-        });
-
-        const savedSubmission = await newSubmission.save();
-        res.status(201).json({ message: 'Form submitted successfully!', submission: savedSubmission });
-
-    } catch (error) {
-        console.error('Error saving contact submission:', error);
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({ message: 'Validation failed', errors: error.errors });
-        }
-        res.status(500).json({ message: 'Server error. Please try again later.' });
+        sendContactEmail({ name, email, phone, message });
+    } catch (emailError) {
+      console.error("Failed to send email:", emailError);
     }
+
+    res
+      .status(201)
+      .json({
+        message: "Form submitted successfully!",
+        submission: savedSubmission,
+      });
+  } catch (error) {
+    console.error("Error saving contact submission:", error);
+    if (error.name === "ValidationError") {
+      return res
+        .status(400)
+        .json({ message: "Validation failed", errors: error.errors });
+    }
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
 };
 
 export const getContactSubmissions = async (req, res) => {

@@ -28,6 +28,7 @@ import { AdminLayout } from "./pages/admin/AdminLayout"
 import { GalleryPage } from "./pages/gallery/Gallery";
 import { AllEventsPage } from "./pages/admin/AllEventsPage";
 import  ImageCompressor from "./component/ImageCompressor";
+import { AdminProfile } from "./pages/admin/AdminProfile";
 
 
 
@@ -98,6 +99,7 @@ function App() {
                 <Route path="events" element={<AllEventsPage />} />
                 <Route path="edit-event/:id" element={<EventForm />} />
                 <Route path="contact-submissions" element={<AdminContactSubmissions />} />
+                <Route path="profile" element={<AdminProfile />} />
               </Route>
             </Route>
           </Routes>
