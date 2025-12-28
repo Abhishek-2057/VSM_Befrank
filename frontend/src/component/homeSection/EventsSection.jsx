@@ -1,5 +1,3 @@
-
-
 // import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
 // import CardCarousel from "../carousal/CardCarousal";
@@ -45,7 +43,6 @@
 //             </h2>
 //             <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-1"></div>
 //           </div>
-          
 
 //           {/* Desktop View More */}
 //           <Link
@@ -103,7 +100,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CardCarousel from "../carousal/CardCarousal";
 import axiosInstance from "../../utils/axiosInstance";
-import EventDetailModal from "../../component/EventModel";
+import EventDetailModal from "../EventModel";
 
 const EventsSection = () => {
   const [events, setEvents] = useState([]);
@@ -157,7 +154,8 @@ const EventsSection = () => {
         ) : (
           <>
             {/* ---- Desktop/Laptop (lg+): keep carousel (with arrows inside your component) ---- */}
-            {events.length != 0 && <div className="hidden lg:block w-full overflow-hidden">
+            {events.length != 0 && (
+              <div className="hidden lg:block w-full overflow-hidden">
                 <CardCarousel
                   cards={events.map((event) => ({
                     id: event._id,
@@ -171,7 +169,7 @@ const EventsSection = () => {
                   }))}
                 />
               </div>
-            }
+            )}
 
             {/* ---- Mobile & Tablet (< lg): stacked cards, no arrows ---- */}
             <div className="block lg:hidden">
@@ -237,7 +235,10 @@ const EventsSection = () => {
 
       {/* Modal */}
       {selectedEventId && (
-        <EventDetailModal eventId={selectedEventId} onClose={handleCloseModal} />
+        <EventDetailModal
+          eventId={selectedEventId}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );
