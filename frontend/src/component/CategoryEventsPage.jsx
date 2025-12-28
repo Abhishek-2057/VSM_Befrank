@@ -1,0 +1,192 @@
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import { EventCard } from "../component/EventCard";
+import EventDetailModal from "../component/EventModel";
+import PlaceholderImage from "../assets/aboutImage3.jpg";
+import HeroImage from "../assets/OurInitiativesimage/eventimage.jpeg";
+import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+
+const CategoryEventsPage = () => {
+  const { category } = useParams(); // Get category from URL (e.g., "SchoolBeFrank")
+  const navigate = useNavigate();
+
+  // State
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalEvents, setTotalEvents] = useState(0);
+
+  // Modal State
+  const [selectedEventId, setSelectedEventId] = useState(null);
+
+  // Helper to format category name for display (e.g., "SchoolBeFrank" -> "School Be Frank")
+  const formatCategoryTitle = (cat) => {
+    if (cat === "SchoolBeFrank") return "School Be Frank";
+    if (cat === "BeFrankForVsmers") return "Be Frank For Vsmers";
+    return cat;
+  };
+
+  const fetchCategoryEvents = async (page) => {
+    try {
+      setLoading(true);
+      setError("");
+
+      // Call the specific category endpoint with pagination
+      const response = await axiosInstance.get(
+        `/api/events/category/${category}?page=${page}&limit=10`
+      );
+
+      setEvents(response.data.data || []);
+      setTotalPages(response.data.pagination.totalPages || 1);
+      setTotalEvents(response.data.pagination.totalEvents || 0);
+      setCurrentPage(response.data.pagination.currentPage || 1);
+    } catch (err) {
+      console.error("Failed to fetch category events:", err);
+      setError(err.response?.data?.message || "Failed to load events.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Re-fetch when category or page changes
+  useEffect(() => {
+    fetchCategoryEvents(currentPage);
+    // Scroll to top when page changes
+    window.scrollTo(0, 0);
+  }, [category, currentPage]);
+
+  // Handlers
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handleKnowMore = (eventId) => {
+    setSelectedEventId(eventId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedEventId(null);
+  };
+
+  return (
+    <div className="min-h-screen relative bg-gray-50">
+      {/* --- Hero Section --- */}
+      <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={HeroImage}
+            alt="Our Initiatives"
+            className="w-full h-full object-cover object-bottom"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+        <div className="absolute inset-0 flex flex-col justify-center items-center max-w-7xl mx-auto px-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 text-center">
+            {formatCategoryTitle(category)}
+          </h1>
+          <p className="text-gray-200 text-lg">
+            Explore all events in this category
+          </p>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate("/events")}
+          className="flex items-center text-gray-600 hover:text-[#f48321] transition-colors mb-8"
+        >
+          <ArrowLeft size={20} className="mr-2" /> Back to All Events
+        </button>
+
+        {/* --- Loading & Error --- */}
+        {loading && (
+          <div className="text-center py-20">
+            <p className="text-xl text-gray-500 animate-pulse">
+              Loading {formatCategoryTitle(category)} events...
+            </p>
+          </div>
+        )}
+        {error && (
+          <div className="text-center text-red-600 bg-red-100 p-4 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        {/* --- Events Grid --- */}
+        {!loading && !error && (
+          <>
+            {events.length > 0 ? (
+              <div className="flex flex-wrap justify-center sm:justify-start gap-8 mb-12">
+                {events.map((event) => (
+                  <EventCard
+                    key={event._id}
+                    image={event.mainImage?.url || PlaceholderImage}
+                    title={event.eventName}
+                    location={event.location}
+                    date={new Date(event.date).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
+                    onKnowMore={() => handleKnowMore(event._id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-white rounded-lg shadow-sm">
+                <p className="text-gray-500 text-lg">
+                  No events found in this category.
+                </p>
+              </div>
+            )}
+
+            {/* --- Server-Side Pagination Controls --- */}
+            {events.length > 0 && totalPages > 1 && (
+              <div className="flex justify-center items-center mt-12 space-x-4">
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  <ChevronLeft size={20} className="mr-1" /> Previous
+                </button>
+
+                <span className="text-gray-600 font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  Next <ChevronRight size={20} className="ml-1" />
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* --- Modal --- */}
+      {selectedEventId && (
+        <EventDetailModal
+          eventId={selectedEventId}
+          onClose={handleCloseModal}
+        />
+      )}
+    </div>
+  );
+};
+
+export default CategoryEventsPage;

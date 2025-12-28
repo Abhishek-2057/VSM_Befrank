@@ -1,68 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../utils/axiosInstance'; // Adjust path if needed
-import { EventCard } from '../../component/EventCard'; // Adjust path
-import EventDetailModal from '../../component/EventModel'; // Adjust path
-import PlaceholderImage from '../../assets/aboutImage3.jpg'; // Keep for fallback
-import { ChevronLeft, ChevronRight } from 'lucide-react'; // Icons for pagination
-import HeroImage from '../../assets/OurInitiativesimage/eventimage.jpeg'; // Example Hero
+import axiosInstance from '../../utils/axiosInstance'; 
+import { EventCard } from '../../component/EventCard'; 
+import EventDetailModal from '../../component/EventModel'; 
+import PlaceholderImage from '../../assets/aboutImage3.jpg'; 
+import HeroImage from '../../assets/OurInitiativesimage/eventimage.jpeg'; 
+import { useNavigate } from 'react-router-dom'; // Added for View More navigation
 
 export const EventsPage = () => {
-    // State for the list of events fetched from backend
-    const [events, setEvents] = useState([]);
+    const navigate = useNavigate();
+
+    // Separate state for the two categories
+    const [vsmEvents, setVsmEvents] = useState([]);
+    const [schoolEvents, setSchoolEvents] = useState([]);
+    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-
-    // --- NEW: State for Pagination ---
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalEvents, setTotalEvents] = useState(0);
 
     // State for the modal
     const [selectedEventId, setSelectedEventId] = useState(null);
 
-    // --- UPDATED: Fetch events function to handle pagination ---
-    const fetchEvents = async (page = 1) => {
+    // Fetch Top 4 events for both categories
+    const fetchCategoryPreviews = async () => {
         try {
             setLoading(true);
             setError('');
-            // Pass the requested page number as a query parameter
-            const response = await axiosInstance.get(`/api/events/getAllEvents?page=${page}`);
 
-            setEvents(response.data.data || []); // Access the 'data' array
-            // Store pagination info from the response
-            setTotalPages(response.data.pagination.totalPages || 1);
-            setCurrentPage(response.data.pagination.currentPage || 1);
-            setTotalEvents(response.data.pagination.totalEvents || 0);
+            // API Call 1: Be Frank For Vsmers (Limit 4)
+            const vsmResponse = await axiosInstance.get(`/api/events/category/BeFrankForVsmers?page=1&limit=4`);
+            
+            // API Call 2: School Be Frank (Limit 4)
+            const schoolResponse = await axiosInstance.get(`/api/events/category/SchoolBeFrank?page=1&limit=4`);
+
+            setVsmEvents(vsmResponse.data.data || []);
+            setSchoolEvents(schoolResponse.data.data || []);
 
         } catch (err) {
             console.error("Failed to fetch events:", err);
-            setError(err.response?.data?.message || 'Failed to load events.');
-            setEvents([]); // Clear events on error
-            setTotalPages(1); // Reset pagination on error
-            setCurrentPage(1);
-            setTotalEvents(0);
+            setError(err.response?.data?.message || 'Failed to load event sections.');
         } finally {
             setLoading(false);
         }
     };
 
-    // --- UPDATED: useEffect to fetch based on currentPage ---
     useEffect(() => {
-        fetchEvents(currentPage);
-    }, [currentPage]); // Re-run effect when currentPage changes
-
-    // --- NEW: Pagination Handlers ---
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(prev => prev - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(prev => prev + 1);
-        }
-    };
+        fetchCategoryPreviews();
+    }, []);
 
     // Function to handle opening the modal
     const handleKnowMore = (eventId) => {
@@ -74,89 +56,114 @@ export const EventsPage = () => {
         setSelectedEventId(null);
     };
 
-    // Helper for pagination button styles
-    const paginationButtonClass = "px-4 py-2 mx-1 border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    // --- Navigate to Full List Page ---
+    // Assuming you have a route like: /events/category/:categoryName
+    const handleViewMore = (category) => {
+        navigate(`/events/category/${category}`); 
+        // OR if you use query params: navigate(`/events/all?category=${category}`);
+    };
 
     return (
         <div className="min-h-screen relative bg-gray-50">
+            {/* --- Hero Section --- */}
             <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
-                {/* Background Image */}
                 <div className="absolute inset-0">
                     <img
                         src={HeroImage}
                         alt="Our Initiatives"
                         className="w-full h-full object-cover object-bottom"
                     />
-                    {/* Dark Overlay */}
                     <div className="absolute inset-0 bg-black/50"></div>
                 </div>
-
-                {/* Text Content */}
-                <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full">
+                <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full px-4">
                     <div className="text-left">
                         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#f48321]">
-                            School Chale Hum Events
+                            Events
                         </h1>
                     </div>
                 </div>
             </section>
-            <div className="max-w-7xl mx-auto py-8 sm:py-12 md:py-16">
+
+            <div className="max-w-7xl mx-auto py-8 sm:py-12 md:py-16 px-4">
 
                 {/* --- Loading & Error States --- */}
                 {loading && (
                     <div className="text-center py-10">
-                         {/* Optional: Add a spinner SVG or component here */}
-                         <p className="text-gray-600 animate-pulse">Loading events...</p>
+                        <p className="text-gray-600 animate-pulse">Loading event sections...</p>
                     </div>
                 )}
                 {error && <p className="text-center text-red-600 bg-red-100 p-3 rounded border border-red-300">Error: {error}</p>}
 
-                {/* --- Events Container & No Events Message --- */}
-                {!loading && !error && events.length > 0 && (
-                    <div className="flex flex-wrap justify-center gap-8 mb-12"> {/* Added mb-12 for spacing */}
-                        {events.map((event) => (
-                            <EventCard
-                                key={event._id}
-                                image={event.mainImage?.url || PlaceholderImage}
-                                title={event.eventName}
-                                location={event.location}
-                                date={new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                onKnowMore={() => handleKnowMore(event._id)}
-                            />
-                        ))}
-                    </div>
-                )}
-                {!loading && !error && events.length === 0 && (
-                     <p className="text-center text-gray-500 py-10">No events found.</p>
-                )}
+                {!loading && !error && (
+                    <>
+                        {/* ================= SECTION 1: Be Frank For Vsmers ================= */}
+                        <div id="be-frank-for-vsmers" className="mb-16 scroll-mt-24">
+                            <div className="flex justify-between items-center mb-8 border-b-2 border-gray-200 pb-2">
+                                <h2 className="text-2xl md:text-3xl font-bold text-[#2692d1]">
+                                    Be Frank For VSMers
+                                </h2>
+                                <button 
+                                    onClick={() => handleViewMore('BeFrankForVsmers')}
+                                    className="text-sm md:text-base font-semibold text-[#f48321] hover:text-[#d66e15] transition-colors flex items-center"
+                                >
+                                    View More &rarr;
+                                </button>
+                            </div>
 
-                {/* --- Pagination Controls --- */}
-                {!loading && !error && totalEvents > 0 && totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-8 space-x-2">
-                        <button
-                            onClick={handlePreviousPage}
-                            disabled={currentPage === 1}
-                            className={`${paginationButtonClass} bg-white text-gray-700 hover:bg-gray-100 disabled:hover:bg-white`}
-                        >
-                            <ChevronLeft size={20} className="inline mr-1" />
-                            Previous
-                        </button>
-                        <span className="text-sm text-gray-700">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button
-                            onClick={handleNextPage}
-                            disabled={currentPage === totalPages}
-                            className={`${paginationButtonClass} bg-white text-gray-700 hover:bg-gray-100 disabled:hover:bg-white`}
-                        >
-                            Next
-                             <ChevronRight size={20} className="inline ml-1" />
-                        </button>
-                    </div>
+                            {vsmEvents.length > 0 ? (
+                                <div className="flex flex-wrap justify-center sm:justify-start gap-6">
+                                    {vsmEvents.map((event) => (
+                                        <EventCard
+                                            key={event._id}
+                                            image={event.mainImage?.url || PlaceholderImage}
+                                            title={event.eventName}
+                                            location={event.location}
+                                            date={new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                            onKnowMore={() => handleKnowMore(event._id)}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 italic">No events found in this category.</p>
+                            )}
+                        </div>
+
+                        {/* ================= SECTION 2: School Be Frank ================= */}
+                        <div id="school-be-frank" className="mb-8 scroll-mt-24">
+                            <div className="flex justify-between items-center mb-8 border-b-2 border-gray-200 pb-2">
+                                <h2 className="text-2xl md:text-3xl font-bold text-[#2692d1]">
+                                    School Be Frank
+                                </h2>
+                                <button 
+                                    onClick={() => handleViewMore('SchoolBeFrank')}
+                                    className="text-sm md:text-base font-semibold text-[#f48321] hover:text-[#d66e15] transition-colors flex items-center"
+                                >
+                                    View More &rarr;
+                                </button>
+                            </div>
+
+                            {schoolEvents.length > 0 ? (
+                                <div className="flex flex-wrap justify-center sm:justify-start gap-6">
+                                    {schoolEvents.map((event) => (
+                                        <EventCard
+                                            key={event._id}
+                                            image={event.mainImage?.url || PlaceholderImage}
+                                            title={event.eventName}
+                                            location={event.location}
+                                            date={new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                            onKnowMore={() => handleKnowMore(event._id)}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 italic">No events found in this category.</p>
+                            )}
+                        </div>
+                    </>
                 )}
             </div>
 
-            {/* --- Render the Modal Conditionally --- */}
+            {/* --- Modal Component --- */}
             {selectedEventId && (
                 <EventDetailModal
                     eventId={selectedEventId}

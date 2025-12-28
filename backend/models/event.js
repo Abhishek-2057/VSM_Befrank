@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
 
-const imageSchema = new mongoose.Schema(
-  {
-    url: { type: String, required: true }, // The permanent Cloudinary URL
-    publicId: { type: String, required: true }, // Needed to delete the image from Cloudinary later
-  }
-);
+const imageSchema = new mongoose.Schema({
+  url: { type: String, required: true }, // The permanent Cloudinary URL
+  publicId: { type: String, required: true }, // Needed to delete the image from Cloudinary later
+});
 
 const eventSchema = new mongoose.Schema(
   {
@@ -13,6 +11,16 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: [true, "Event name is required"],
     },
+
+    category: {
+      type: String,
+      required: [true, "Event category is required"],
+      enum: {
+        values: ["SchoolBeFrank", "BeFrankForVsmers"],
+        message: "{VALUE} is not a valid event category",
+      },
+    },
+
     location: {
       type: String,
       required: [true, "Location is required"],
@@ -29,11 +37,11 @@ const eventSchema = new mongoose.Schema(
       required: [true, "Description is required"],
     },
     mainImage: {
-      type: imageSchema, 
+      type: imageSchema,
       required: [true, "Main image is required"],
     },
     galleryImages: {
-      type: [imageSchema], 
+      type: [imageSchema],
       required: [true, "Gallery images are required"],
       validate: [
         (v) => Array.isArray(v) && v.length > 0,

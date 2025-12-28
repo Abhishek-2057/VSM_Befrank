@@ -7,7 +7,7 @@ import about3 from '../../assets/aboutimages/image3.jpg';
 import about4 from '../../assets/aboutimages/image4.jpg';
 import about5 from '../../assets/aboutimages/image5.jpg';
 import about6 from '../../assets/aboutimages/image6.jpg';
-import temnMember1 from "../../assets/ourteamaboutpage/AditiPandit.jpg"
+import temnMember1 from "../../assets/ourteamaboutpage/AditiPandit.jpeg"
 import temnMember2 from "../../assets/ourteamaboutpage/KaranPardesi.jpg"
 import temnMember3 from "../../assets/ourteamaboutpage/AnandSapate.jpg"
 import temnMember4 from "../../assets/ourteamaboutpage/ShubhamSakpal.jpg"
