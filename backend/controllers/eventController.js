@@ -6,7 +6,7 @@ import Event from "../models/event.js";
 
 export const createEvent = async (req, res) => {
   try {
-    const { eventName, location, facilitatorName, date, description } =
+    const { eventName, location, facilitatorName, date, description,category } =
       req.body;
 
     if (!req.files || !req.files.mainImage || !req.files.galleryImages) {
@@ -32,6 +32,7 @@ export const createEvent = async (req, res) => {
     // 3. Create Event
     const newEvent = new Event({
       eventName,
+      category,
       location,
       facilitatorName: facilitatorName || "",
       date,
@@ -88,6 +89,7 @@ export const updateEvent = async (req, res) => {
       facilitatorName,
       date,
       description,
+      category,
       existingGalleryImages,
     } = req.body;
     const eventId = req.params.id;
@@ -99,6 +101,7 @@ export const updateEvent = async (req, res) => {
 
     // 1. Update text fields
     eventToUpdate.eventName = eventName;
+    eventToUpdate.category = category;
     eventToUpdate.location = location;
     eventToUpdate.facilitatorName = facilitatorName;
     eventToUpdate.date = date;
@@ -205,6 +208,8 @@ export const deleteEvent = async (req, res) => {
       });
   }
 };
+
+
 
 export const getAllEvents = async (req, res) => {
   try {
@@ -325,5 +330,52 @@ export const getGalleryImages = async (req, res) => {
         message: "Server error while fetching gallery images.",
         error: error.message,
       });
+  }
+};
+
+
+
+
+export const getEventsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params; // Get category from URL params
+    const { page = 1, limit = 10 } = req.query; // Pagination query params
+
+    // Validate the category matches your Enum
+    const validCategories = ["SchoolBeFrank", "BeFrankForVsmers"];
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ message: "Invalid category requested." });
+    }
+
+    const filter = { category: category };
+
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+    const skip = (pageNum - 1) * limitNum;
+
+    const events = await Event.find(filter)
+      .sort({ date: -1 }) // Sort by latest date
+      .skip(skip)
+      .limit(limitNum)
+      .select("eventName location date createdAt mainImage category");
+
+    const totalEvents = await Event.countDocuments(filter);
+
+    res.status(200).json({
+      message: `${category} events fetched successfully.`,
+      data: events,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: Math.ceil(totalEvents / limitNum),
+        totalEvents,
+        limit: limitNum,
+      },
+    });
+  } catch (error) {
+    console.error(`Error fetching ${req.params.category} events:`, error);
+    res.status(500).json({
+      message: "Server error while fetching category events.",
+      error: error.message,
+    });
   }
 };

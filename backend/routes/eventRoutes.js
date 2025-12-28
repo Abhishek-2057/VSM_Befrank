@@ -4,7 +4,8 @@ import {
     deleteEvent,
     getAllEvents,
     getGalleryImages,
-    getLatestEvents
+    getLatestEvents,
+    getEventsByCategory
 } from '../controllers/eventController.js';
 import { verifyToken } from '../middleware/jwtAuth.js';
 import { eventUpload } from '../uitils/fileUpload.js';
@@ -12,6 +13,8 @@ import { eventUpload } from '../uitils/fileUpload.js';
 const router = express.Router();
 
 router.get('/getAllEvents', getAllEvents);
+
+router.get('/category/:category', getEventsByCategory);
 
 // POST /api/events/create -> Create a new event
 router.post('/create', verifyToken, eventUpload, createEvent);

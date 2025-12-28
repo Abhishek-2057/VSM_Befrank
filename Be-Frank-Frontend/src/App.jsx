@@ -28,7 +28,7 @@ import { AdminLayout } from "./pages/admin/AdminLayout"
 import { GalleryPage } from "./pages/gallery/Gallery";
 import { AllEventsPage } from "./pages/admin/AllEventsPage";
 import  ImageCompressor from "./component/ImageCompressor";
-
+import CategoryEventsPage from './component/CategoryEventsPage';
 
 
 
@@ -79,6 +79,7 @@ function App() {
             <Route path="/events" element={<EventsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/our-initiatives" element={<OurInitiative />} />
+            <Route path="/events/category/:category" element={<CategoryEventsPage />} />
             {/* <Route path="/gallery" element={<GalleryPage />} /> */}
 
 
