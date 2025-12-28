@@ -12,7 +12,15 @@ export const OurInitiative = () => {
     
     // --- DATA ---
     const initiativeData = [
+         {
+            id: "be-frank-vsmers",
+            title: "Be Frank For VSMers",
+            image: initImage2,
+            paragraph:
+                "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
+        },
         {
+            id: "school-be-frank",
             title: "Be Frank School Chale Hum",
             image: about4,
             paragraph:
@@ -20,12 +28,21 @@ export const OurInitiative = () => {
             link: "/events"
         },
         {
+            id: "mehfil",
             title: "VSM Mehfil",
             image: initImage2,
             paragraph:
                 "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
         },
+         {
+            id: "book-bite",
+            title: "Book Bite",
+            image: initImage2,
+            paragraph:
+                "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
+        },
         {
+            id: "blog",
             title: "Vawsomes Blog",
             image: initImage3,
             paragraph:
@@ -72,7 +89,8 @@ export const OurInitiative = () => {
                     return (
                         <section
                             key={index}
-                            className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 sm:py-8"
+                            id={item.id}
+                            className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 sm:py-8 scroll-mt-24"
                         >
                             <div className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${!isEven ? 'lg:flex-row-reverse' : ''}`}>
                                 

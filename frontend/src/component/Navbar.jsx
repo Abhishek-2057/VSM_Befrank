@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"; // Added hooks
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { User, CircleUser, Menu, X, ChevronDown, ChevronUp } from "lucide-react"; 
 import { useAuth } from "../context/AuthContext";
 import vsmlogo from "../assets/vsmthane-logo.jpg";
@@ -8,7 +8,7 @@ import vsmlogo from "../assets/vsmthane-logo.jpg";
 const navItems = [
   { name: "Home", path: "/" },
   { name: "About us", path: "/about" },
-  { name: "Our Initiatives", path: "/our-initiatives" },
+  { name: "Our Initiatives", path: "/our-initiatives" }, // Now has dropdown logic
   { name: "Events", path: "/events" }, 
   { name: "Contact us", path: "/contact" },
 ];
@@ -16,7 +16,10 @@ const navItems = [
 const Navbar = () => {
   const [active, setActive] = useState("About us");
   const [mobileOpen, setMobileOpen] = useState(false);
+  
+  // Mobile sub-menu states
   const [mobileEventsOpen, setMobileEventsOpen] = useState(false);
+  const [mobileInitiativesOpen, setMobileInitiativesOpen] = useState(false); // NEW
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -24,7 +27,11 @@ const Navbar = () => {
 
   const handleDrawerToggle = () => {
     setMobileOpen((prev) => !prev);
-    if (mobileOpen) setMobileEventsOpen(false); 
+    // Reset submenus when closing drawer
+    if (mobileOpen) {
+        setMobileEventsOpen(false);
+        setMobileInitiativesOpen(false);
+    }
   };
 
   const toggleMobileEvents = (e) => {
@@ -32,27 +39,41 @@ const Navbar = () => {
     setMobileEventsOpen((prev) => !prev);
   };
 
-  // --- NEW: Function to handle scrolling ---
-  const handleScrollToSection = (sectionId) => {
-    // 1. Close mobile drawer if open
+  const toggleMobileInitiatives = (e) => {
+    e.preventDefault(); 
+    setMobileInitiativesOpen((prev) => !prev);
+  };
+
+  // --- Scroll Logic for Events Page ---
+  const handleScrollToEventSection = (sectionId) => {
     setMobileOpen(false);
     setActive("Events");
 
-    // 2. Check if we are already on the events page
     if (location.pathname === "/events") {
       const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      // 3. If not on events page, navigate there first, then scroll
       navigate("/events");
-      // Small timeout to allow the new page to render before scrolling
       setTimeout(() => {
         const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  };
+
+  // --- NEW: Scroll Logic for Initiatives Page ---
+  const handleScrollToInitiativeSection = (sectionId) => {
+    setMobileOpen(false);
+    setActive("Our Initiatives");
+
+    if (location.pathname === "/our-initiatives") {
+      const element = document.getElementById(sectionId);
+      if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      navigate("/our-initiatives");
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
     }
   };
@@ -79,13 +100,53 @@ const Navbar = () => {
             <div className="flex items-center gap-8 h-full">
               {navItems.map((item) => {
                 
-                // 1. Special Handling for "Events" Dropdown (Desktop)
+                // --- 1. HANDLING "OUR INITIATIVES" DROPDOWN ---
+                if (item.name === "Our Initiatives") {
+                    return (
+                      <div key={item.name} className="relative group h-full flex items-center">
+                        <NavLink
+                          to={item.path}
+                          onClick={() => setActive(item.name)}
+                          className={({ isActive }) =>
+                            `flex items-center gap-1 pb-1 font-semibold transition-colors duration-300 ${
+                              isActive
+                                ? "text-black border-b-2 border-yellow-400"
+                                : "text-gray-500 hover:text-black"
+                            }`
+                          }
+                        >
+                          {item.name}
+                          <ChevronDown size={16} className="mt-0.5 group-hover:rotate-180 transition-transform duration-200" />
+                        </NavLink>
+  
+                        {/* Dropdown Menu */}
+                        <div className="absolute top-full left-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform group-hover:translate-y-0 translate-y-2">
+                          <div className="bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden">
+                            {[
+                                { label: "Be Frank For VSMers", id: "be-frank-vsmers" },
+                                { label: "Be Frank School Chale Hum", id: "school-be-frank" },
+                                { label: "VSM Mehfil", id: "mehfil" },
+                                { label: "Book Bite", id: "book-bite" },
+                                { label: "Vawsomes Blog", id: "blog" }
+                            ].map((subItem) => (
+                                <button
+                                    key={subItem.id}
+                                    onClick={() => handleScrollToInitiativeSection(subItem.id)}
+                                    className="block w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors border-b border-gray-50 last:border-b-0 cursor-pointer"
+                                >
+                                    {subItem.label}
+                                </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                // --- 2. HANDLING "EVENTS" DROPDOWN ---
                 if (item.name === "Events") {
                   return (
-                    <div
-                      key={item.name}
-                      className="relative group h-full flex items-center"
-                    >
+                    <div key={item.name} className="relative group h-full flex items-center">
                       <NavLink
                         to={item.path}
                         onClick={() => setActive(item.name)}
@@ -98,36 +159,31 @@ const Navbar = () => {
                         }
                       >
                         {item.name}
-                        <ChevronDown
-                          size={16}
-                          className="mt-0.5 group-hover:rotate-180 transition-transform duration-200"
-                        />
+                        <ChevronDown size={16} className="mt-0.5 group-hover:rotate-180 transition-transform duration-200" />
                       </NavLink>
 
                       {/* Dropdown Menu */}
                       <div className="absolute top-full left-0 w-56 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform group-hover:translate-y-0 translate-y-2">
                         <div className="bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden">
-                          {/* Use div/button instead of Link for scrolling behavior */}
-                         
-                          <div
-                            onClick={() => handleScrollToSection("be-frank-for-vsmers")}
-                            className="block px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors cursor-pointer"
-                          >
-                            Be Frank For Vsmers
-                          </div>
-                           <div
-                            onClick={() => handleScrollToSection("school-be-frank")}
-                            className="block px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors border-b border-gray-50 cursor-pointer"
+                          <button
+                            onClick={() => handleScrollToEventSection("school-be-frank")}
+                            className="block w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors border-b border-gray-50 cursor-pointer"
                           >
                             School Be Frank
-                          </div>
+                          </button>
+                          <button
+                            onClick={() => handleScrollToEventSection("be-frank-for-vsmers")}
+                            className="block w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors cursor-pointer"
+                          >
+                            Be Frank For Vsmers
+                          </button>
                         </div>
                       </div>
                     </div>
                   );
                 }
 
-                // 2. Standard Nav Items (Desktop)
+                // --- 3. STANDARD NAV ITEMS ---
                 return (
                   <NavLink
                     key={item.name}
@@ -192,7 +248,49 @@ const Navbar = () => {
           <ul className="flex flex-col gap-4">
             {navItems.map((item) => {
                 
-              // 1. Special Handling for "Events" (Mobile Accordion)
+              // --- 1. Mobile Handling for "Our Initiatives" ---
+              if (item.name === "Our Initiatives") {
+                return (
+                    <li key={item.name} className="flex flex-col">
+                    <div 
+                        className="flex justify-between items-center w-full px-2 py-1 text-lg text-gray-600 font-normal cursor-pointer"
+                        onClick={toggleMobileInitiatives}
+                    >
+                        <span>{item.name}</span>
+                        {mobileInitiativesOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </div>
+
+                    <div className={`overflow-hidden transition-all duration-300 ${mobileInitiativesOpen ? 'max-h-80 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                        <div className="flex flex-col gap-3 pl-6 border-l-2 border-gray-100 ml-3">
+                            {[
+                                { label: "Be Frank For Vsmers", id: "be-frank-vsmers" },
+                                { label: "School Be Frank", id: "school-be-frank" },
+                                { label: "Mehfil", id: "mehfil" },
+                                { label: "Book Bite", id: "book-bite" },
+                                { label: "Blog", id: "blog" }
+                            ].map((subItem) => (
+                                <div 
+                                    key={subItem.id}
+                                    onClick={() => handleScrollToInitiativeSection(subItem.id)}
+                                    className="text-sm text-gray-500 hover:text-black cursor-pointer"
+                                >
+                                    {subItem.label}
+                                </div>
+                            ))}
+                             <Link 
+                                to="/our-initiatives"
+                                onClick={() => { setActive("Our Initiatives"); handleDrawerToggle(); }}
+                                className="text-sm text-[#f48321] font-semibold"
+                            >
+                                View All
+                            </Link>
+                        </div>
+                    </div>
+                  </li>
+                );
+              }
+
+              // --- 2. Mobile Handling for "Events" ---
               if (item.name === "Events") {
                 return (
                   <li key={item.name} className="flex flex-col">
@@ -204,17 +302,16 @@ const Navbar = () => {
                         {mobileEventsOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </div>
 
-                    {/* Sub-menu with transition */}
                     <div className={`overflow-hidden transition-all duration-300 ${mobileEventsOpen ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
                         <div className="flex flex-col gap-3 pl-6 border-l-2 border-gray-100 ml-3">
                             <div 
-                                onClick={() => handleScrollToSection("school-be-frank")}
+                                onClick={() => handleScrollToEventSection("school-be-frank")}
                                 className="text-sm text-gray-500 hover:text-black cursor-pointer"
                             >
                                 School Be Frank
                             </div>
                             <div 
-                                onClick={() => handleScrollToSection("be-frank-for-vsmers")}
+                                onClick={() => handleScrollToEventSection("be-frank-for-vsmers")}
                                 className="text-sm text-gray-500 hover:text-black cursor-pointer"
                             >
                                 Be Frank For Vsmers
@@ -232,7 +329,7 @@ const Navbar = () => {
                 );
               }
 
-              // 2. Standard Nav Items (Mobile)
+              // --- 3. Standard Mobile Items ---
               return (
                 <li key={item.name}>
                   <NavLink
