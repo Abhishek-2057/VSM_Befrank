@@ -106,9 +106,6 @@ const CategoryEventsPage = () => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 text-center">
             {formatCategoryTitle(category)}
           </h1>
-          <p className="text-gray-200 text-lg">
-            Explore all events in this category
-          </p>
         </div>
       </section>
 

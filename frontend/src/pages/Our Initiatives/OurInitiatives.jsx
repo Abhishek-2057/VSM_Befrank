@@ -6,49 +6,51 @@ import SEO from '../../component/SEO';
 import HeroImage from '../../assets/OurInitiativesimage/image2.jpg'; // Example Hero
 import about4 from '../../assets/aboutimages/image4.jpg';
 import initImage2 from '../../assets/OurInitiativesimage/mehfil.png';
+import VSMers from '../../assets/OurInitiativesimage/VSMers.JPG';
+import BookBite from "../../assets/OurInitiativesimage/BookBite.jpg";
 import initImage3 from '../../assets/OurInitiativesimage/vawesomes.png';
 
 export const OurInitiative = () => {
     
     // --- DATA ---
     const initiativeData = [
-         {
-            id: "be-frank-vsmers",
-            title: "Be Frank For VSMers",
-            image: initImage2,
-            paragraph:
-                "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
-        },
-        {
-            id: "school-be-frank",
-            title: "Be Frank School Chale Hum",
-            image: about4,
-            paragraph:
-                "Team Be Frank at VSM has introduced the “School Chale Hum” program for students especially those studying in 8th, 9th, and 10th standard. The program aims to help students build useful skills, strengthen their knowledge, and develop a positive attitude.\n\nAt present, the team is connecting with schools in the interiors of Maharashtra that offer quality education despite limited financial resources. We hope to support schools that are committed to helping their students understand their true potential and continue growing with confidence.",
-            link: "/events"
-        },
-        {
-            id: "mehfil",
-            title: "VSM Mehfil",
-            image: initImage2,
-            paragraph:
-                "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
-        },
-         {
-            id: "book-bite",
-            title: "Book Bite",
-            image: initImage2,
-            paragraph:
-                "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
-        },
-        {
-            id: "blog",
-            title: "Vawsomes Blog",
-            image: initImage3,
-            paragraph:
-               "Vawsomes Blog is a vibrant space where ideas come alive! \n\nIt’s an open platform for students to share their thoughts on a variety of topics, encouraging playful reflection and creative expression. With Vawsomes, we’re adding an exciting new dimension—a place where both students and volunteers can speak from the heart.\n\n Think of it as a colorful kaleidoscope, capturing and celebrating all the bright, beautiful shades of Vidyadaan Sahayyak Mandal!",
-            link: "https://vawesomes.wordpress.com/about/"
-        }
+      {
+        id: "be-frank-vsmers",
+        title: "Be Frank For VSMers",
+        image: VSMers,
+        paragraph:
+          "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
+      },
+      {
+        id: "school-be-frank",
+        title: "Be Frank School Chale Hum",
+        image: about4,
+        paragraph:
+          "Team Be Frank at VSM has introduced the “School Chale Hum” program for students especially those studying in 8th, 9th, and 10th standard. The program aims to help students build useful skills, strengthen their knowledge, and develop a positive attitude.\n\nAt present, the team is connecting with schools in the interiors of Maharashtra that offer quality education despite limited financial resources. We hope to support schools that are committed to helping their students understand their true potential and continue growing with confidence.",
+        link: "/events",
+      },
+      {
+        id: "mehfil",
+        title: "VSM Mehfil",
+        image: initImage2,
+        paragraph:
+          "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
+      },
+      {
+        id: "book-bite",
+        title: "BookBite With Insight",
+        image: BookBite,
+        paragraph:
+          "VSM ushers in every New Year with a burst of creativity and celebration through its signature talent show, Mehfil, led by the spirited Be Frank team. Each year, more than 200 students, volunteers, and alumni light up the stage with performances across diverse art forms.\n\n Mehfil isn’t just an event—it’s the moment everyone at VSM looks forward to, a joyful tradition where students participate with excitement, pride, and wholehearted enthusiasm.",
+      },
+      {
+        id: "blog",
+        title: "Vawsomes Blog",
+        image: initImage3,
+        paragraph:
+          "Vawsomes Blog is a vibrant space where ideas come alive! \n\nIt’s an open platform for students to share their thoughts on a variety of topics, encouraging playful reflection and creative expression. With Vawsomes, we’re adding an exciting new dimension—a place where both students and volunteers can speak from the heart.\n\n Think of it as a colorful kaleidoscope, capturing and celebrating all the bright, beautiful shades of Vidyadaan Sahayyak Mandal!",
+        link: "https://vawesomes.wordpress.com/about/",
+      },
     ];
 
     return (

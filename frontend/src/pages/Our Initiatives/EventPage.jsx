@@ -113,16 +113,15 @@ export const EventsPage = () => {
 
         {!loading && !error && (
           <>
-            {/* ================= SECTION 1: Be Frank For Vsmers ================= */}
-            <div id="be-frank-for-vsmers" className="mb-16 scroll-mt-24">
+            {/* ================= SECTION 1: School Be Frank ================= */}
+            <div id="school-be-frank" className="mb-8 scroll-mt-24">
               <div className="flex justify-between items-center mb-8 ">
                 <h2 className="text-[#f48321] font-bold text-xl sm:text-2xl lg:text-3xl capitalize">
-                  Be Frank For VSMers
+                  School Be Frank
                   <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-2 mb-6"></div>
                 </h2>
-
                 <button
-                  onClick={() => handleViewMore("BeFrankForVsmers")}
+                  onClick={() => handleViewMore("SchoolBeFrank")}
                   className="text-md md:text-base font-semibold text-[#f48321] hover:text-[#f78a2b] transition-colors flex items-center"
                 >
                   View More
@@ -132,9 +131,9 @@ export const EventsPage = () => {
                 </button>
               </div>
 
-              {vsmEvents.length > 0 ? (
+              {schoolEvents.length > 0 ? (
                 <div className="flex flex-wrap justify-center sm:justify-start gap-6">
-                  {vsmEvents.map((event) => (
+                  {schoolEvents.map((event) => (
                     <EventCard
                       key={event._id}
                       image={event.mainImage?.url || PlaceholderImage}
@@ -156,15 +155,16 @@ export const EventsPage = () => {
               )}
             </div>
 
-            {/* ================= SECTION 2: School Be Frank ================= */}
-            <div id="school-be-frank" className="mb-8 scroll-mt-24">
+            {/* ================= SECTION 2: Be Frank For Vsmers ================= */}
+            <div id="be-frank-for-vsmers" className="mb-16 scroll-mt-24">
               <div className="flex justify-between items-center mb-8 ">
                 <h2 className="text-[#f48321] font-bold text-xl sm:text-2xl lg:text-3xl capitalize">
-                  School Be Frank
+                  Be Frank For VSMers
                   <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-2 mb-6"></div>
                 </h2>
+
                 <button
-                  onClick={() => handleViewMore("SchoolBeFrank")}
+                  onClick={() => handleViewMore("BeFrankForVsmers")}
                   className="text-md md:text-base font-semibold text-[#f48321] hover:text-[#f78a2b] transition-colors flex items-center"
                 >
                   View More
@@ -174,9 +174,9 @@ export const EventsPage = () => {
                 </button>
               </div>
 
-              {schoolEvents.length > 0 ? (
+              {vsmEvents.length > 0 ? (
                 <div className="flex flex-wrap justify-center sm:justify-start gap-6">
-                  {schoolEvents.map((event) => (
+                  {vsmEvents.map((event) => (
                     <EventCard
                       key={event._id}
                       image={event.mainImage?.url || PlaceholderImage}

@@ -103,7 +103,10 @@ const Navbar = () => {
                 // --- 1. HANDLING "OUR INITIATIVES" DROPDOWN ---
                 if (item.name === "Our Initiatives") {
                     return (
-                      <div key={item.name} className="relative group h-full flex items-center">
+                      <div
+                        key={item.name}
+                        className="relative group h-full flex items-center"
+                      >
                         <NavLink
                           to={item.path}
                           onClick={() => setActive(item.name)}
@@ -116,26 +119,40 @@ const Navbar = () => {
                           }
                         >
                           {item.name}
-                          <ChevronDown size={16} className="mt-0.5 group-hover:rotate-180 transition-transform duration-200" />
+                          <ChevronDown
+                            size={16}
+                            className="mt-0.5 group-hover:rotate-180 transition-transform duration-200"
+                          />
                         </NavLink>
-  
+
                         {/* Dropdown Menu */}
                         <div className="absolute top-full left-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform group-hover:translate-y-0 translate-y-2">
                           <div className="bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden">
                             {[
-                                { label: "Be Frank For VSMers", id: "be-frank-vsmers" },
-                                { label: "Be Frank School Chale Hum", id: "school-be-frank" },
-                                { label: "VSM Mehfil", id: "mehfil" },
-                                { label: "Book Bite", id: "book-bite" },
-                                { label: "Vawsomes Blog", id: "blog" }
+                              {
+                                label: "Be Frank For VSMers",
+                                id: "be-frank-vsmers",
+                              },
+                              {
+                                label: "Be Frank School Chale Hum",
+                                id: "school-be-frank",
+                              },
+                              { label: "VSM Mehfil", id: "mehfil" },
+                              {
+                                label: "BookBite With Insight",
+                                id: "book-bite",
+                              },
+                              { label: "Vawsomes Blog", id: "blog" },
                             ].map((subItem) => (
-                                <button
-                                    key={subItem.id}
-                                    onClick={() => handleScrollToInitiativeSection(subItem.id)}
-                                    className="block w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors border-b border-gray-50 last:border-b-0 cursor-pointer"
-                                >
-                                    {subItem.label}
-                                </button>
+                              <button
+                                key={subItem.id}
+                                onClick={() =>
+                                  handleScrollToInitiativeSection(subItem.id)
+                                }
+                                className="block w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors border-b border-gray-50 last:border-b-0 cursor-pointer"
+                              >
+                                {subItem.label}
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -175,7 +192,7 @@ const Navbar = () => {
                             onClick={() => handleScrollToEventSection("be-frank-for-vsmers")}
                             className="block w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-yellow-50 hover:text-black transition-colors cursor-pointer"
                           >
-                            Be Frank For Vsmers
+                            Be Frank For VSMers
                           </button>
                         </div>
                       </div>
@@ -263,10 +280,10 @@ const Navbar = () => {
                     <div className={`overflow-hidden transition-all duration-300 ${mobileInitiativesOpen ? 'max-h-80 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
                         <div className="flex flex-col gap-3 pl-6 border-l-2 border-gray-100 ml-3">
                             {[
-                                { label: "Be Frank For Vsmers", id: "be-frank-vsmers" },
+                                { label: "Be Frank For VSMers", id: "be-frank-vsmers" },
                                 { label: "School Be Frank", id: "school-be-frank" },
                                 { label: "Mehfil", id: "mehfil" },
-                                { label: "Book Bite", id: "book-bite" },
+                                { label: "BookBite With Insight", id: "book-bite" },
                                 { label: "Blog", id: "blog" }
                             ].map((subItem) => (
                                 <div 
@@ -314,7 +331,7 @@ const Navbar = () => {
                                 onClick={() => handleScrollToEventSection("be-frank-for-vsmers")}
                                 className="text-sm text-gray-500 hover:text-black cursor-pointer"
                             >
-                                Be Frank For Vsmers
+                                Be Frank For VSMers
                             </div>
                              <Link 
                                 to="/events"
