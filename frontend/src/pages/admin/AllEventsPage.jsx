@@ -234,21 +234,63 @@ export const AllEventsPage = () => {
       </div>
 
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-          <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full transform animate-in">
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4"
+          onClick={() => setIsDeleteModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full animate-fade-in"
+          >
+            {/* Icon */}
             <div className="flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mx-auto mb-4">
               <Trash2 className="text-red-600" size={28} />
             </div>
+
+            {/* Title */}
             <h2 className="text-2xl font-bold text-center mb-3">
               Confirm Deletion
             </h2>
+
+            {/* Message */}
             <p className="text-center text-gray-600 mb-6">
               Are you sure you want to delete the event{" "}
               <span className="font-semibold text-gray-800">
                 "{eventToDelete?.eventName}"
               </span>
-              ? This action cannot be undone.
+              ? <br />
+              <span className="text-red-600 font-medium">
+                This action cannot be undone.
+              </span>
             </p>
+
+            {/* Actions */}
+            <div className="flex gap-4">
+              {/* Cancel */}
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+
+              {/* Confirm Delete */}
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
