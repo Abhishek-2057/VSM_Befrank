@@ -5,6 +5,7 @@ import axiosInstance from '../../utils/axiosInstance';
 import { X, Upload, Image as ImageIcon, Calendar, MapPin, User, Tag, ChevronDown, Loader2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import imageCompression from "browser-image-compression";
 
 
 const CATEGORY_OPTIONS = [
@@ -236,6 +237,7 @@ export const EventForm = () => {
     const [mainImagePreview, setMainImagePreview] = useState('');
     const [galleryImagePreviews, setGalleryImagePreviews] = useState([]);
 
+    const toastIdRef = React.useRef(null);
 
     const [existingGalleryImages, setExistingGalleryImages] = useState([]);
 
@@ -282,6 +284,25 @@ export const EventForm = () => {
         }));
     };
 
+    const compressImage = async (file) => {
+      const options = {
+        maxSizeMB: 0.5,
+        useWebWorker: true,
+        initialQuality: 0.8,
+        fileType: "image/webp",
+        maxIteration: 5,
+      };
+
+      try {
+        if (file.size < 300 * 1024) return file; 
+        return await imageCompression(file, options);
+      } catch (err) {
+        console.error("Compression failed:", err);
+        return file;
+      }
+    };
+
+
 
     const handleDescriptionChange = (value) => {
         setDescription(value);
@@ -292,24 +313,28 @@ export const EventForm = () => {
 
 
     const handleMainImageDrop = (files) => {
-        if (files.length > 0) {
-            const file = files[0];
-            setMainImage(file);
-            setMainImagePreview(URL.createObjectURL(file));
-            setErrors(prev => ({ ...prev, mainImage: null }));
-        }
+      if (!files.length) return;
+
+      const file = files[0];
+      setMainImage(file);
+      setMainImagePreview(URL.createObjectURL(file));
     };
+
+
 
 
     const handleGalleryImagesDrop = (files) => {
-        const newFiles = files.map(file => ({
-            url: URL.createObjectURL(file),
-            file: file,
-            isExisting: false
-        }));
-        setGalleryImages(prev => [...prev, ...files]);
-        setGalleryImagePreviews(prev => [...prev, ...newFiles]);
+      const previews = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        isExisting: false,
+      }));
+
+      setGalleryImages((prev) => [...prev, ...files]);
+      setGalleryImagePreviews((prev) => [...prev, ...previews]);
     };
+
+
 
 
     const removeGalleryImage = (indexToRemove) => {
@@ -350,70 +375,92 @@ export const EventForm = () => {
 
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const validationErrors = validate();
-        setErrors(validationErrors);
+      e.preventDefault();
 
+      const validationErrors = validate();
+      setErrors(validationErrors);
+      if (Object.keys(validationErrors).length > 0) return;
 
-        if (Object.keys(validationErrors).length > 0) {
-            console.error("Validation Failed:", validationErrors);
-            return;
-        }
+      setIsSubmitting(true);
+      setUploadProgress(0);
 
+      // 🔔 1️⃣ Show compressing toast
+      toastIdRef.current = toast.loading("Compressing images...");
 
-        setIsSubmitting(true);
-        setUploadProgress(0);
+      const data = new FormData();
+      data.append("eventName", formData.eventName);
+      data.append("category", formData.category);
+      data.append("location", formData.location);
+      data.append("facilitatorName", formData.facilitatorName);
+      data.append("date", formData.date);
+      data.append("description", description);
 
-
-        const data = new FormData();
-        data.append('eventName', formData.eventName);
-        data.append('category', formData.category);
-        data.append('location', formData.location);
-        data.append('facilitatorName', formData.facilitatorName);
-        data.append('date', formData.date);
-        data.append('description', description);
-
-
+      try {
+        // 🔄 Compress main image
         if (mainImage) {
-            data.append('mainImage', mainImage);
+          const compressedMain = await compressImage(mainImage);
+          data.append("mainImage", compressedMain);
         }
-        
-        galleryImages.forEach(file => {
-            data.append('galleryImages', file);
+
+        // 🔄 Compress gallery images
+        for (const file of galleryImages) {
+          const compressed = await compressImage(file);
+          data.append("galleryImages", compressed);
+        }
+
+        // 🔔 2️⃣ Update toast → Uploading
+        toast.update(toastIdRef.current, {
+          render: "Uploading Event...",
+          isLoading: true,
         });
 
+        if (isEditMode) {
+          data.append(
+            "existingGalleryImages",
+            JSON.stringify(existingGalleryImages)
+          );
+        }
+
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percent);
+          },
+        };
 
         if (isEditMode) {
-            data.append('existingGalleryImages', JSON.stringify(existingGalleryImages));
+          await axiosInstance.put(`/api/events/${id}`, data, config);
+          toast.update(toastIdRef.current, {
+            render: "Event updated successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        } else {
+          await axiosInstance.post("/api/events/create", data, config);
+          toast.update(toastIdRef.current, {
+            render: "Event created successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+          });
         }
 
-
-        try {
-            const config = {
-                headers: { 'Content-Type': 'multipart/form-data' },
-                onUploadProgress: (progressEvent) => {
-                    const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    setUploadProgress(percent);
-                }
-            };
-
-
-            if (isEditMode) {
-                await axiosInstance.put(`/api/events/${id}`, data, config);
-                 toast.success('Event Updated Successfully!');
-                navigate('/admin/events');
-            } else {
-                await axiosInstance.post('/api/events/create', data, config);
-                toast.success('Event Created Successfully!');
-                // ... resetForm() logic ...
-                navigate('/admin/events');
-            }
-        } catch (error) {
-            console.error("Submission failed:", error);
-            toast.success('Operation failed. Please check the console.');
-        } finally {
-            setIsSubmitting(false);
-        }
+        navigate("/admin/events");
+      } catch (error) {
+        console.error("Submission failed:", error);
+        toast.update(toastIdRef.current, {
+          render: "Upload failed. Please try again.",
+          type: "error",
+          isLoading: false,
+          autoClose: 4000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
     };
 
 

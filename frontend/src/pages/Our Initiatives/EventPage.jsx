@@ -5,6 +5,7 @@ import EventDetailModal from "../../component/EventModel";
 import PlaceholderImage from "../../assets/aboutImage3.jpg";
 import HeroImage from "../../assets/OurInitiativesimage/eventimage.jpeg";
 import { useNavigate } from "react-router-dom"; // Added for View More navigation
+import SEO from "../../component/SEO";
 
 export const EventsPage = () => {
   const navigate = useNavigate();
@@ -69,6 +70,14 @@ export const EventsPage = () => {
   return (
     <div className="min-h-screen relative bg-gray-50">
       {/* --- Hero Section --- */}
+
+      <SEO
+        title="Be Frank Events | School Be Frank & Be Frank For VSMers"
+        description="Discover events organized by Be Frank including school programs, talent shows, workshops, and student engagement activities across Maharashtra."
+        keywords="Be Frank events, VSM events, school programs Maharashtra, student workshops"
+        url="https://befrank.vsmthane.org/events"
+      />
+
       <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
         <div className="absolute inset-0">
           <img

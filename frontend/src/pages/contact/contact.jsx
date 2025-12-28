@@ -260,81 +260,125 @@ const ContactForm = () => {
 // ---== Main Contact Page Component ==---
 export const ContactPage = () => {
     return (
-        <div className="">
-            <SEO title="Contact Us" description="Get in touch with us through the Contact Us page." />
+      <div className="">
+        <SEO
+          title="Contact Us"
+          description="Get in touch with Be Frank, an initiative of Vidyadaan Sahayyak Mandal, Thane. Volunteer, donate, or connect with us."
+          keywords="Contact Be Frank, VSM Thane contact, volunteer NGO Maharashtra"
+          url="https://befrank.vsmthane.org/contact"
+        />
 
+        <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img
+              src={HeroImage}
+              alt="Our Initiatives"
+              className="w-full h-full object-cover"
+            />
+            {/* Dark Overlay */}
+            <div className="absolute inset-0 bg-black/50"></div>
+          </div>
 
-            <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
-                {/* Background Image */}
-                <div className="absolute inset-0">
-                    <img
-                        src={HeroImage}
-                        alt="Our Initiatives"
-                        className="w-full h-full object-cover"
-                    />
-                    {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-black/50"></div>
-                </div>
-
-                {/* Text Content */}
-                <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full">
-                    <div className="text-left">
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#f48321]">
-                            Contact Us
-                        </h1>
-                    </div>
-                </div>
-            </section>
-
-            <div className="mx-auto py-8 sm:py-12 md:py-16 max-w-[85vw]">
-                
-                <div className="flex flex-col md:flex-row gap-8 lg:gap-12 rounded-lg">
-                    <div className="w-full md:w-1/2 flex items-stretch">
-                         <ContactForm />
-                    </div>
-
-                    <div className="w-full md:w-1/2 rounded-lg overflow-hidden min-h-[450px]">
-                        <iframe
-                            title="Google Maps Location"
-                            src="https://maps.google.com/maps?q=Vidyadaan%20Sahayak%20Mandal%20Thane&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                            width="100%"
-                            height="100%"
-                            style={{ border: 0 }}
-                            allowFullScreen
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                        />
-                    </div>
-                </div>
-
-                <div className="flex flex-col md:flex-row gap-8 md:gap-20 mt-12 md:mt-16 items-start md:items-center">
-                    <div className="w-full md:w-auto md:flex-grow">
-                        <h3 className="font-bold text-xl sm:text-2xl text-slate-800">
-                            Registered Office Address
-                        </h3>
-                        <div className="h-[2px] w-1/3 bg-yellow-400 rounded-full my-3 shadow" />
-                        <address className="text-base sm:text-lg text-slate-600 not-italic leading-relaxed">
-                            <strong className="text-slate-800">Vidyadaan Sahayak Mandal (VSM Thane)</strong><br />
-                            Office No. 2, 1st Staircase, 1st floor, Khopat ST Stand building, Khopat,<br />
-                            Thane, Maharashtra, India – 400601
-                        </address>
-                    </div>
-
-                    <div className="flex-shrink-0 md:pr-10">
-                        <div className="flex items-center mb-2">
-                            {/* Phone SVG Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-800 mr-3"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            <a href="tel:+919987437446" className="text-base sm:text-lg text-slate-600 hover:text-black">+91-9987437446</a>
-                        </div>
-                        <div className="flex items-center">
-                             {/* Mail SVG Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-800 mr-3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                             <a href="mailto:vsmthane@gmail.com" className="text-base sm:text-lg text-slate-600 hover:text-black">vsmthane@gmail.com</a>
-                        </div>
-                    </div>
-                </div>
-
+          {/* Text Content */}
+          <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full">
+            <div className="text-left">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#f48321]">
+                Contact Us
+              </h1>
             </div>
+          </div>
+        </section>
+
+        <div className="mx-auto py-8 sm:py-12 md:py-16 max-w-[85vw]">
+          <div className="flex flex-col md:flex-row gap-8 lg:gap-12 rounded-lg">
+            <div className="w-full md:w-1/2 flex items-stretch">
+              <ContactForm />
+            </div>
+
+            <div className="w-full md:w-1/2 rounded-lg overflow-hidden min-h-[450px]">
+              <iframe
+                title="Google Maps Location"
+                src="https://maps.google.com/maps?q=Vidyadaan%20Sahayak%20Mandal%20Thane&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8 md:gap-20 mt-12 md:mt-16 items-start md:items-center">
+            <div className="w-full md:w-auto md:flex-grow">
+              <h3 className="font-bold text-xl sm:text-2xl text-slate-800">
+                Registered Office Address
+              </h3>
+              <div className="h-[2px] w-1/3 bg-yellow-400 rounded-full my-3 shadow" />
+              <address className="text-base sm:text-lg text-slate-600 not-italic leading-relaxed">
+                <strong className="text-slate-800">
+                  Vidyadaan Sahayak Mandal (VSM Thane)
+                </strong>
+                <br />
+                Office No. 2, 1st Staircase, 1st floor, Khopat ST Stand
+                building, Khopat,
+                <br />
+                Thane, Maharashtra, India – 400601
+              </address>
+            </div>
+
+            <div className="flex-shrink-0 md:pr-10">
+              <div className="flex items-center mb-2">
+                {/* Phone SVG Icon */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-slate-800 mr-3"
+                >
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <a
+                  href="tel:+919987437446"
+                  className="text-base sm:text-lg text-slate-600 hover:text-black"
+                >
+                  +91-9987437446
+                </a>
+              </div>
+              <div className="flex items-center">
+                {/* Mail SVG Icon */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-slate-800 mr-3"
+                >
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <a
+                  href="mailto:vsmthane@gmail.com"
+                  className="text-base sm:text-lg text-slate-600 hover:text-black"
+                >
+                  vsmthane@gmail.com
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     );
 };

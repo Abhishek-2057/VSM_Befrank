@@ -3,6 +3,80 @@ import {
   deleteFromCloudinary,
 } from "../config/cloudinaryConfig.js";
 import Event from "../models/event.js";
+import ContactSubmission from "../models/ContactSubmission.js";
+
+
+export const getDashboardStats = async (req, res) => {
+  try {
+    // Total counts
+    const totalContacts = await ContactSubmission.countDocuments();
+    const totalEvents = await Event.countDocuments();
+
+    // Reason-wise contact distribution
+    const contactByReason = await ContactSubmission.aggregate([
+      {
+        $group: {
+          _id: "$reason",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Monthly contact trend (last 6 months)
+    const contactTrend = await ContactSubmission.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+      { $limit: 6 },
+    ]);
+
+    // Event category distribution
+    // Event category distribution
+    const rawEventByCategory = await Event.aggregate([
+      {
+        $group: {
+          _id: "$category",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Convert to object
+    const eventByCategory = {
+      SchoolBeFrank: 0,
+      BeFrankForVsmers: 0,
+    };
+
+    rawEventByCategory.forEach((item) => {
+      eventByCategory[item._id] = item.count;
+    });
+
+    // Upcoming vs past events
+    const now = new Date();
+    const upcomingEvents = await Event.countDocuments({ date: { $gte: now } });
+    const pastEvents = await Event.countDocuments({ date: { $lt: now } });
+
+    res.json({
+      totalContacts,
+      totalEvents,
+      contactByReason,
+      contactTrend,
+      eventByCategory,
+      upcomingEvents,
+      pastEvents,
+    });
+  } catch (error) {
+    console.error("Dashboard stats error:", error);
+    res.status(500).json({ message: "Failed to load dashboard stats" });
+  }
+};
 
 export const createEvent = async (req, res) => {
   try {

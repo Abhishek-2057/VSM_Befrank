@@ -8,6 +8,7 @@ import HeroImage from "../assets/OurInitiativesimage/eventimage.jpeg";
 import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import Loader from "./Loader";
 import Pagination from "./Pagination";
+import SEO from "./SEO";
 
 const CategoryEventsPage = () => {
   const { category } = useParams(); // Get category from URL (e.g., "SchoolBeFrank")
@@ -82,6 +83,16 @@ const CategoryEventsPage = () => {
   return (
     <div className="min-h-screen relative bg-gray-50">
       {/* --- Hero Section --- */}
+
+      <SEO
+        title={`${formatCategoryTitle(category)} Events`}
+        description={`Explore all ${formatCategoryTitle(
+          category
+        )} events organized by Be Frank under Vidyadaan Sahayyak Mandal, Thane.`}
+        keywords="Be Frank category events, VSM programs, student development activities"
+        url={`https://befrank.vsmthane.org/events/category/${category}`}
+      />
+
       <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
         <div className="absolute inset-0">
           <img
