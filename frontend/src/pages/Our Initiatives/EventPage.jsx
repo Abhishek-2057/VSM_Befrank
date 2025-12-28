@@ -5,6 +5,7 @@ import EventDetailModal from '../../component/EventModel';
 import PlaceholderImage from '../../assets/aboutImage3.jpg'; 
 import HeroImage from '../../assets/OurInitiativesimage/eventimage.jpeg'; 
 import { useNavigate } from 'react-router-dom'; // Added for View More navigation
+import Loader from '../../component/Loader';
 
 export const EventsPage = () => {
     const navigate = useNavigate();
@@ -26,10 +27,10 @@ export const EventsPage = () => {
             setError('');
 
             // API Call 1: Be Frank For Vsmers (Limit 4)
-            const vsmResponse = await axiosInstance.get(`/api/events/category/BeFrankForVsmers?page=1&limit=4`);
+            const vsmResponse = await axiosInstance.get(`/api/events/category/BeFrankForVsmers?page=1&limit=3`);
             
             // API Call 2: School Be Frank (Limit 4)
-            const schoolResponse = await axiosInstance.get(`/api/events/category/SchoolBeFrank?page=1&limit=4`);
+            const schoolResponse = await axiosInstance.get(`/api/events/category/SchoolBeFrank?page=1&limit=3`);
 
             setVsmEvents(vsmResponse.data.data || []);
             setSchoolEvents(schoolResponse.data.data || []);
@@ -88,9 +89,7 @@ export const EventsPage = () => {
 
                 {/* --- Loading & Error States --- */}
                 {loading && (
-                    <div className="text-center py-10">
-                        <p className="text-gray-600 animate-pulse">Loading event sections...</p>
-                    </div>
+                    <Loader text='Loading events...' />
                 )}
                 {error && <p className="text-center text-red-600 bg-red-100 p-3 rounded border border-red-300">Error: {error}</p>}
 

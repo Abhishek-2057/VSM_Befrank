@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CircleX } from 'lucide-react'; // Changed icon back as per your code
 import axiosInstance from '../utils/axiosInstance'; // Adjust path
 import PlaceholderImage from '../assets/aboutImage3.jpg'; // Adjust path for fallback image
+import Loader from './Loader';
 
 const EventDetailModal = ({ eventId, onClose }) => {
     // State to hold the fetched event details
@@ -68,7 +69,7 @@ const EventDetailModal = ({ eventId, onClose }) => {
                 <div className='pb-4 px-6 md:px-10'> {/* Adjusted padding */}
 
                     {/* Loading State */}
-                    {loading && <div className="text-center p-10 text-gray-600">Loading details...</div>}
+                    {loading && <Loader text='Loading details...' />}
 
                     {/* Error State */}
                     {error && <div className="text-center p-10 text-red-600 bg-red-50 rounded border border-red-200">Error: {error}</div>}

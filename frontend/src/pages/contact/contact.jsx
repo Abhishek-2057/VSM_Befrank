@@ -7,11 +7,12 @@ import { toast } from "react-toastify";
 const ContactForm = () => {
     // State for form input values
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        message: '',
-        agree: false,
+      name: "",
+      email: "",
+      phone: "",
+      reason: "",
+      message: "",
+      agree: false,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false); 
@@ -19,6 +20,15 @@ const ContactForm = () => {
 
     // State for validation errors
     const [errors, setErrors] = useState({});
+
+    const REASON_OPTIONS = [
+      { value: "", label: "Select reason of contact" },
+      { value: "Volunteer with Us", label: "Volunteer with Us" },
+      { value: "Become a Donor", label: "Become a Donor" },
+      { value: "Suggest a School", label: "Suggest a School" },
+      { value: "other", label: "Other" },
+    ];
+
 
     // Handles changes for all inputs
     const handleChange = (e) => {
@@ -45,6 +55,10 @@ const ContactForm = () => {
         }
         if (!formData.message) newErrors.message = 'Message is required';
         if (!formData.agree) newErrors.agree = 'You must agree to the terms';
+        if (!formData.reason) {
+          newErrors.reason = "Please select a reason for contact";
+        }
+
         
         return newErrors;
     };
@@ -77,6 +91,7 @@ const ContactForm = () => {
           name: "",
           email: "",
           phone: "",
+          reason: "",
           message: "",
           agree: false,
         });
@@ -166,6 +181,29 @@ const ContactForm = () => {
             />
             {errors.phone && (
               <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
+          </div>
+
+          <div>
+            <select
+              name="reason"
+              disabled={isSubmitting}
+              value={formData.reason}
+              onChange={handleChange}
+              className={inputClasses("reason")}
+            >
+              {REASON_OPTIONS.map((opt) => (
+                <option
+                  key={opt.value}
+                  value={opt.value}
+                  disabled={opt.value === ""}
+                >
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            {errors.reason && (
+              <p className="text-red-500 text-sm mt-1">{errors.reason}</p>
             )}
           </div>
 
