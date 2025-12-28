@@ -31,6 +31,7 @@ import  ImageCompressor from "./component/ImageCompressor";
 import { AdminProfile } from "./pages/admin/AdminProfile";
 
 import CategoryEventsPage from './component/CategoryEventsPage';
+import NotFound from "./component/NotFound";
 
 
 
@@ -81,12 +82,13 @@ function App() {
             <Route path="/events" element={<EventsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/our-initiatives" element={<OurInitiative />} />
-            <Route path="/events/category/:category" element={<CategoryEventsPage />} />
+            <Route
+              path="/events/category/:category"
+              element={<CategoryEventsPage />}
+            />
             {/* <Route path="/gallery" element={<GalleryPage />} /> */}
 
-
-            <Route path="/compress" element={< ImageCompressor />} />
-
+            <Route path="/compress" element={<ImageCompressor />} />
 
             {/* --- Admin Routes --- */}
             {/* Login page is outside the protected layout */}
@@ -100,15 +102,20 @@ function App() {
                 <Route path="create-event" element={<EventForm />} />
                 <Route path="events" element={<AllEventsPage />} />
                 <Route path="edit-event/:id" element={<EventForm />} />
-                <Route path="contact-submissions" element={<AdminContactSubmissions />} />
+                <Route
+                  path="contact-submissions"
+                  element={<AdminContactSubmissions />}
+                />
                 <Route path="profile" element={<AdminProfile />} />
               </Route>
             </Route>
+
+            <Route path="/*" element={<NotFound />} />
           </Routes>
         </LayoutWrapper>
       </AuthProvider>
     </BrowserRouter>
-  )
+  );
 }
 
 export default App;

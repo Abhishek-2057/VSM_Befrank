@@ -15,9 +15,12 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title="Be Frank | Vidyadaan Sahayyak Mandal, Thane"
-        description="Welcome to the home page of my site"
+        title="Be Frank Initiative | Empowering Students Through Confidence & Creativity"
+        description="Be Frank is a student personality development initiative by Vidyadaan Sahayyak Mandal (VSM Thane), nurturing confidence, creativity, leadership, and self-expression among young minds across Maharashtra."
+        keywords="Be Frank, VSM Thane, student development, personality development, education NGO Maharashtra"
+        url="https://befrank.vsmthane.org/"
       />
+
       <ImageCaroursal />
       <AboutSection />
       <EventsSection />

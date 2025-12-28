@@ -6,6 +6,9 @@ import EventDetailModal from "../component/EventModel";
 import PlaceholderImage from "../assets/aboutImage3.jpg";
 import HeroImage from "../assets/OurInitiativesimage/eventimage.jpeg";
 import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+import Loader from "./Loader";
+import Pagination from "./Pagination";
+import SEO from "./SEO";
 
 const CategoryEventsPage = () => {
   const { category } = useParams(); // Get category from URL (e.g., "SchoolBeFrank")
@@ -38,7 +41,7 @@ const CategoryEventsPage = () => {
 
       // Call the specific category endpoint with pagination
       const response = await axiosInstance.get(
-        `/api/events/category/${category}?page=${page}&limit=10`
+        `/api/events/category/${category}?page=${page}&limit=12`
       );
 
       setEvents(response.data.data || []);
@@ -80,6 +83,16 @@ const CategoryEventsPage = () => {
   return (
     <div className="min-h-screen relative bg-gray-50">
       {/* --- Hero Section --- */}
+
+      <SEO
+        title={`${formatCategoryTitle(category)} Events`}
+        description={`Explore all ${formatCategoryTitle(
+          category
+        )} events organized by Be Frank under Vidyadaan Sahayyak Mandal, Thane.`}
+        keywords="Be Frank category events, VSM programs, student development activities"
+        url={`https://befrank.vsmthane.org/events/category/${category}`}
+      />
+
       <section className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -93,9 +106,6 @@ const CategoryEventsPage = () => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 text-center">
             {formatCategoryTitle(category)}
           </h1>
-          <p className="text-gray-200 text-lg">
-            Explore all events in this category
-          </p>
         </div>
       </section>
 
@@ -109,13 +119,7 @@ const CategoryEventsPage = () => {
         </button>
 
         {/* --- Loading & Error --- */}
-        {loading && (
-          <div className="text-center py-20">
-            <p className="text-xl text-gray-500 animate-pulse">
-              Loading {formatCategoryTitle(category)} events...
-            </p>
-          </div>
-        )}
+        {loading && <Loader text="Loading events..." />}
         {error && (
           <div className="text-center text-red-600 bg-red-100 p-4 rounded-lg">
             {error}
@@ -149,30 +153,18 @@ const CategoryEventsPage = () => {
                 </p>
               </div>
             )}
-
             {/* --- Server-Side Pagination Controls --- */}
             {events.length > 0 && totalPages > 1 && (
-              <div className="flex justify-center items-center mt-12 space-x-4">
-                <button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  <ChevronLeft size={20} className="mr-1" /> Previous
-                </button>
-
-                <span className="text-gray-600 font-medium">
-                  Page {currentPage} of {totalPages}
-                </span>
-
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  Next <ChevronRight size={20} className="ml-1" />
-                </button>
-              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                onPrev={handlePreviousPage}
+                onNext={handleNextPage}
+              />
             )}
           </>
         )}

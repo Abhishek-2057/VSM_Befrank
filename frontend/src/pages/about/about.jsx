@@ -52,115 +52,126 @@ export const About = () => {
     ];
 
     return (
-        <div className="bg-white">
+      <div className="bg-white">
+        <SEO
+          title="About Be Frank & VSM Thane | Transforming Students Beyond Academics"
+          description="Learn about Be Frank and Vidyadaan Sahayyak Mandal, Thane. Discover our journey, mentor-student model, and mission to empower rural and underprivileged students."
+          keywords="About Be Frank, VSM Thane, education NGO, mentor student model, rural education Maharashtra"
+          url="https://befrank.vsmthane.org/about"
+        />
 
+        <section className="relative w-full h-[30vh] md:h-[60vh] overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img
+              src={about1}
+              alt="About Be Frank"
+              className="w-full h-full object-cover"
+            />
+            {/* Dark Overlay */}
+            <div className="absolute inset-0 bg-black/50"></div>
+          </div>
 
-        <SEO title="About Us" description="Learn more about our mission and team on the About Us page." />
+          {/* Text Content */}
+          <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full">
+            <div className="text-left">
+              <h1 className="text-4xl text-[#f48321] sm:text-5xl md:text-6xl font-bold">
+                About Us
+              </h1>
+            </div>
+          </div>
+        </section>
 
-            <section className="relative w-full h-[30vh] md:h-[60vh] overflow-hidden">
-                
-                {/* Background Image */}
-                <div className="absolute inset-0">
-                    <img
-                        src={about1}
-                        alt="About Be Frank"
-                        className="w-full h-full object-cover"
-                    />
-                    {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-black/50"></div>
-                </div>
+        {aboutData.map((item, index) => (
+          <section
+            key={index}
+            className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-9 md:pt-12"
+          >
+            {/* Title 1 */}
+            <h2 className="text-[#f48321] font-bold text-xl sm:text-2xl lg:text-3xl capitalize">
+              {item.title}
+            </h2>
+            <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-1"></div>
 
-                {/* Text Content */}
-                <div className="absolute inset-0 flex flex-col justify-end pb-12 sm:pb-16 max-w-7xl mx-auto w-full">
-                    <div className="text-left">
-                        <h1 className="text-4xl text-[#f48321] sm:text-5xl md:text-6xl font-bold">
-                            About Us
-                        </h1>
-                    </div>
-                </div>
-            </section>
+            {/* Paragraph (conditionally rendered) */}
 
-            {aboutData.map((item, index) => (
-                <section
-                    key={index}
-                    className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-9 md:pt-12"
-                >
-                    {/* Title 1 */}
-                    <h2 className="text-[#f48321] font-bold text-xl sm:text-2xl lg:text-3xl capitalize">
-                        {item.title}
-                    </h2>
-                    <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-1"></div>
+            {item.paragraph &&
+              item.paragraph.split("\n\n").map((para, i) => {
+                const headingMatch = para.match(/^(.*?):\s*(.*)$/);
 
-                    {/* Paragraph (conditionally rendered) */}
-
-                    {item.paragraph && item.paragraph.split("\n\n").map((para, i) => {
-                        const headingMatch = para.match(/^(.*?):\s*(.*)$/);
-
-                        return (
-                            <p
-                                key={i}
-                                className={`text-slate-600 text-base sm:text-lg leading-relaxed ${i === 0 ? "mt-6 mb-3" : "mt-0 mb-5"
-                                    }`}
-                            >
-                                {headingMatch ? (
-                                    <>
-                                        <span className="font-bold text-[#2692d1]">{headingMatch[1]} : </span>
-                                        {headingMatch[2]}
-                                    </>
-                                ) : (
-                                    para
-                                )}
-                            </p>
-                        );
-                    })}
-
-
-
-
-                    {/* Image Section (conditionally rendered) */}
-                    {item.imageLeft && item.imageRight && (
-                        <div className="flex flex-col md:flex-row gap-4 mt-6 md:h-110">
-                            <img
-                                src={item.imageLeft}
-                                alt={`${item.title}-left`}
-                                className="w-full md:w-3/5 rounded-2xl object-cover md:h-full"
-                            />
-                            <img
-                                src={item.imageRight}
-                                alt={`${item.title}-right`}
-                                className="w-full md:w-2/5 rounded-2xl object-cover md:h-full"
-                            />
-                        </div>
-
+                return (
+                  <p
+                    key={i}
+                    className={`text-slate-600 text-base sm:text-lg leading-relaxed ${
+                      i === 0 ? "mt-6 mb-3" : "mt-0 mb-5"
+                    }`}
+                  >
+                    {headingMatch ? (
+                      <>
+                        <span className="font-bold text-[#2692d1]">
+                          {headingMatch[1]} :{" "}
+                        </span>
+                        {headingMatch[2]}
+                      </>
+                    ) : (
+                      para
                     )}
-                </section>
-            ))}
+                  </p>
+                );
+              })}
 
-            {/* --- Our Team Section --- */}
-            <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-[#f48321] font-bold text-xl sm:text-2xl lg:text-3xl pt-16">
-                    Our Team
-                </h2>
-                <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-1"></div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-8 sm:py-12 md:py-16">
-                    {ourTeam.map((member, index) => (
-                        <div key={index} className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-                            {/* Image placeholder */}
-                            <div className="bg-slate-200 aspect-square w-full rounded-xl mb-6">
-                                <img src={member.image} alt={member.title} className="w-full h-full object-cover rounded-xl" />
-                            </div>
-                            {/* Text content */}
-                            <div>
-                                <h3 className="text-xl font-bold text-slate-900">{member.title}</h3>
-                                <p className="text-slate-500 pb-3">{member.subtitle}</p>
-                            </div>
-                        </div>
-                    ))}
+            {/* Image Section (conditionally rendered) */}
+            {item.imageLeft && item.imageRight && (
+              <div className="flex flex-col md:flex-row gap-4 mt-6 md:h-110">
+                <img
+                  src={item.imageLeft}
+                  alt={`${item.title}-left`}
+                  className="w-full md:w-3/5 rounded-2xl object-cover md:h-full"
+                />
+                <img
+                  src={item.imageRight}
+                  alt={`${item.title}-right`}
+                  className="w-full md:w-2/5 rounded-2xl object-cover md:h-full"
+                />
+              </div>
+            )}
+          </section>
+        ))}
+
+        {/* --- Our Team Section --- */}
+        <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-[#f48321] font-bold text-xl sm:text-2xl lg:text-3xl pt-16">
+            Our Team
+          </h2>
+          <div className="bg-[#2692d1] h-[4px] rounded-sm w-[100px] mt-1"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-8 sm:py-12 md:py-16">
+            {ourTeam.map((member, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-2xl shadow-md border border-gray-100"
+              >
+                {/* Image placeholder */}
+                <div className="bg-slate-200 aspect-square w-full rounded-xl mb-6">
+                  <img
+                    src={member.image}
+                    alt={member.title}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
                 </div>
-            </section>
+                {/* Text content */}
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    {member.title}
+                  </h3>
+                  <p className="text-slate-500 pb-3">{member.subtitle}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-            {/* --- How You Can Participate Section --- */}
-            {/* <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-8 pb-12">
+        {/* --- How You Can Participate Section --- */}
+        {/* <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-8 pb-12">
                 <h2 className="text-[#f48321] font-bold text-xl sm:text-2xl lg:text-3xl">
                     How you can participate?
                 </h2>
@@ -184,7 +195,6 @@ export const About = () => {
                     </li>
                 </ul>
             </section> */}
-
-        </div>
+      </div>
     );
 };

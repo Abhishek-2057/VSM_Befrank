@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import aboutImage1 from '../../assets/aboutImage1.jpg';
 import aboutImage2 from '../../assets/aboutImage2.jpg';
 import aboutImage3 from '../../assets/aboutImage3.jpg';
-import aboutImage4 from '../../assets/homeimages/caroursal1.jpg';
+import aboutImage4 from "../../assets/AboutImage4.jpeg";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 

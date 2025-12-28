@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance'; // Assuming this is your configured axios
+import Loader from '../component/Loader';
 
 const AuthContext = createContext(null);
 
@@ -95,7 +96,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     if (loading) {
-        return <div>Loading...</div>; // Or a proper spinner component
+        return <div className='w-full h-[100vh]'><Loader text='' /></div>; // Or a proper spinner component
     }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

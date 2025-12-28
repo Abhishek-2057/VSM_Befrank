@@ -5,12 +5,15 @@ import {
     getAllEvents,
     getGalleryImages,
     getLatestEvents,
-    getEventsByCategory
+    getEventsByCategory,
+    getDashboardStats
 } from '../controllers/eventController.js';
 import { verifyToken } from '../middleware/jwtAuth.js';
 import { eventUpload } from '../uitils/fileUpload.js';
 
 const router = express.Router();
+
+router.get("/dashboard/stats", getDashboardStats);
 
 router.get('/getAllEvents', getAllEvents);
 

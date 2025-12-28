@@ -12,7 +12,7 @@ const ImageCompressor = () => {
     setOriginalFile(file);
 
     const options = {
-      maxSizeMB: 0.4,              // 500 KB target
+      maxSizeMB: 0.5,              // 500 KB target
       useWebWorker: true,
       initialQuality: 0.8,
       fileType: "image/webp",      // WhatsApp-like

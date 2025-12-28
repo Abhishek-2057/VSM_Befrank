@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, CircleX } from "lucide-react"; // Changed icon back as per your code
 import axiosInstance from "../utils/axiosInstance"; // Adjust path
 import PlaceholderImage from "../assets/aboutImage3.jpg"; // Adjust path for fallback image
+import Loader from "./Loader";
 
 const EventDetailModal = ({ eventId, onClose }) => {
   // State to hold the fetched event details
@@ -35,6 +36,20 @@ const EventDetailModal = ({ eventId, onClose }) => {
 
     fetchEventDetails();
   }, [eventId]); // Re-run effect if eventId changes
+
+  useEffect(() => {
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
+  }, []);
+
 
   // This stops the modal from closing when you click inside the content area
   const handleContentClick = (e) => e.stopPropagation();
@@ -79,9 +94,7 @@ const EventDetailModal = ({ eventId, onClose }) => {
           {/* Adjusted padding */}
           {/* Loading State */}
           {loading && (
-            <div className="text-center p-10 text-gray-600">
-              Loading details...
-            </div>
+            <Loader text="Loading Event Details.." />
           )}
           {/* Error State */}
           {error && (
